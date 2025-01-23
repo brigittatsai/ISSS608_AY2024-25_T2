@@ -77,7 +77,7 @@ A short description of each building block are as follows:
 ggplot(data=exam_data)
 ```
 
-### 4.2 Aesthetic Mappings 
+### 4.2 Aesthetic Mappings
 
 ```{r}
 ggplot(data=exam_data, 

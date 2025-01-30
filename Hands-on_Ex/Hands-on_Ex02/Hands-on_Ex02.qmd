@@ -185,7 +185,7 @@ p3 + inset_element(p2,
                    top = 1)
 ```
 
-## 4.6 Creating a composite figure by using patchwork and ggtheme 
+## 4.6 Creating a composite figure by using patchwork and ggtheme
 
 ```{r}
 patchwork <- (p1 / p2) | p3

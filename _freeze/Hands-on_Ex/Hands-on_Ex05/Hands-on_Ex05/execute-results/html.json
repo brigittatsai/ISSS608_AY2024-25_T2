@@ -1,0 +1,17 @@
+{
+  "hash": "615fff4167c4e3bdd90c98417fe6ea65",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Hands-on Exercise 5\"\nauthor: \"Brigitta Karen Tsai\"\ndate: \"February 8, 2025\"\ndate-modified: \"last-modified\"\nexecute: \n  eval: true\n  echo: true\n  message: false\n  freeze: true\n---\n\n\n# Part 1: Creating Ternary Plot with R\n\n# 1 Getting Started\n\n## 1.1 Install and Load R Packages\n\n\n::: {.cell}\n\n```{.r .cell-code}\npacman::p_load(plotly, ggtern, tidyverse)\n```\n:::\n\n\n# 2 Data Preparation\n\n## 2.1 Import Data\n\n\n::: {.cell}\n\n```{.r .cell-code}\npop_data <- read_csv(\"data/respopagsex2000to2018_tidy.csv\") \n```\n\n::: {.cell-output .cell-output-stderr}\n\n```\nRows: 108126 Columns: 5\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr (3): PA, SZ, AG\ndbl (2): Year, Population\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\n```\n\n\n:::\n:::\n\n\n## 2.2 Preparing the Data\n\nUse **mutate()** to derive new measures **young**, **economy active** and **old**\n\n\n::: {.cell}\n\n```{.r .cell-code}\nagpop_mutated <- pop_data %>%\n  mutate(`Year` = as.character(Year))%>%\n  spread(AG, Population) %>%\n  mutate(YOUNG = rowSums(.[4:8]))%>%\n  mutate(ACTIVE = rowSums(.[9:16]))  %>%\n  mutate(OLD = rowSums(.[17:21])) %>%\n  mutate(TOTAL = rowSums(.[22:24])) %>%\n  filter(Year == 2018)%>%\n  filter(TOTAL > 0)\n```\n:::\n\n\n# 3 Plotting Ternary Diagram with R\n\n## 3.1 Plotting a static ternary diagram\n\nUse **ggtern()** function from **ggtern** package to create a simple ternary plot\n\n\n::: {.cell}\n\n```{.r .cell-code}\nggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +\n  geom_point()\n```\n\n::: {.cell-output-display}\n![](Hands-on_Ex05_files/figure-html/unnamed-chunk-4-1.png){width=672}\n:::\n:::\n",
+    "supporting": [
+      "Hands-on_Ex05_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

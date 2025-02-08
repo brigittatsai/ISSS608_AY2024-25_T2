@@ -9,3 +9,48 @@ execute:
   message: false
   freeze: true
 ---
+
+# Part 1: Creating Ternary Plot with R
+
+# 1 Getting Started
+
+## 1.1 Install and Load R Packages
+
+```{r}
+pacman::p_load(plotly, ggtern, tidyverse)
+```
+
+# 2 Data Preparation
+
+## 2.1 Import Data
+
+```{r}
+pop_data <- read_csv("data/respopagsex2000to2018_tidy.csv") 
+```
+
+## 2.2 Preparing the Data
+
+Use **mutate()** to derive new measures **young**, **economy active** and **old**
+
+```{r}
+agpop_mutated <- pop_data %>%
+  mutate(`Year` = as.character(Year))%>%
+  spread(AG, Population) %>%
+  mutate(YOUNG = rowSums(.[4:8]))%>%
+  mutate(ACTIVE = rowSums(.[9:16]))  %>%
+  mutate(OLD = rowSums(.[17:21])) %>%
+  mutate(TOTAL = rowSums(.[22:24])) %>%
+  filter(Year == 2018)%>%
+  filter(TOTAL > 0)
+```
+
+# 3 Plotting Ternary Diagram with R
+
+## 3.1 Plotting a static ternary diagram
+
+Use **ggtern()** function from **ggtern** package to create a simple ternary plot
+
+```{r}
+ggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +
+  geom_point()
+```

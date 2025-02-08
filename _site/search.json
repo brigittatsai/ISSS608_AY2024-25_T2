@@ -35,6 +35,34 @@
     "text": "2.2 Import Data\nImport ship performance dataset to get started with the analysis.\n\nship &lt;- read_csv(\"data/Ship.csv\")\n\nRows: 2736 Columns: 18\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr   (5): Ship_Type, Route_Type, Engine_Type, Maintenance_Status, Weather_C...\ndbl  (12): Speed_Over_Ground_knots, Engine_Power_kW, Distance_Traveled_nm, D...\ndate  (1): Date\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message."
   },
   {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#install-and-load-r-packages",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#install-and-load-r-packages",
+    "title": "Hands-on Exercise 5",
+    "section": "1.1 Install and Load R Packages",
+    "text": "1.1 Install and Load R Packages\n\npacman::p_load(plotly, ggtern, tidyverse)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#import-data",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#import-data",
+    "title": "Hands-on Exercise 5",
+    "section": "2.1 Import Data",
+    "text": "2.1 Import Data\n\npop_data &lt;- read_csv(\"data/respopagsex2000to2018_tidy.csv\") \n\nRows: 108126 Columns: 5\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr (3): PA, SZ, AG\ndbl (2): Year, Population\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#preparing-the-data",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#preparing-the-data",
+    "title": "Hands-on Exercise 5",
+    "section": "2.2 Preparing the Data",
+    "text": "2.2 Preparing the Data\nUse mutate() to derive new measures young, economy active and old\n\nagpop_mutated &lt;- pop_data %&gt;%\n  mutate(`Year` = as.character(Year))%&gt;%\n  spread(AG, Population) %&gt;%\n  mutate(YOUNG = rowSums(.[4:8]))%&gt;%\n  mutate(ACTIVE = rowSums(.[9:16]))  %&gt;%\n  mutate(OLD = rowSums(.[17:21])) %&gt;%\n  mutate(TOTAL = rowSums(.[22:24])) %&gt;%\n  filter(Year == 2018)%&gt;%\n  filter(TOTAL &gt; 0)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#plotting-a-static-ternary-diagram",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#plotting-a-static-ternary-diagram",
+    "title": "Hands-on Exercise 5",
+    "section": "3.1 Plotting a static ternary diagram",
+    "text": "3.1 Plotting a static ternary diagram\nUse ggtern() function from ggtern package to create a simple ternary plot\n\nggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +\n  geom_point()"
+  },
+  {
     "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#load-and-install-r-packages",
     "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#load-and-install-r-packages",
     "title": "Hands-on Exercise 3",

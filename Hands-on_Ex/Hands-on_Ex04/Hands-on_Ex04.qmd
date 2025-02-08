@@ -498,7 +498,7 @@ exam %>%
     subtitle = "Median Point + Multiple-interval plot")
 ```
 
-## 3.2 Make over with 95% and 99% confidence interval 
+## 3.2 Make over with 95% and 99% confidence interval
 
 ```{r}
 exam %>%

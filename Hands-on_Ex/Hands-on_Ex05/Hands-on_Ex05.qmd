@@ -54,3 +54,104 @@ Use **ggtern()** function from **ggtern** package to create a simple ternary plo
 ggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +
   geom_point()
 ```
+
+Now let's add colors to each category
+
+```{r}
+ggtern(data=agpop_mutated, aes(x=YOUNG,y=ACTIVE, z=OLD)) +
+  geom_point() +
+  labs(title="Population structure, 2015") +
+  theme_rgbw()
+```
+
+## 3.2 Plotting an interactive ternary diagram
+
+The code below create an interactive ternary plot using **plot_ly()** function of **Plotly R**
+
+```{r}
+# reusable function for creating annotation object
+label <- function(txt) {
+  list(
+    text = txt, 
+    x = 0.1, y = 1,
+    ax = 0, ay = 0,
+    xref = "paper", yref = "paper", 
+    align = "center",
+    font = list(family = "serif", size = 15, color = "white"),
+    bgcolor = "#b3b3b3", bordercolor = "black", borderwidth = 2
+  )
+}
+
+# reusable function for axis formatting
+axis <- function(txt) {
+  list(
+    title = txt, tickformat = ".0%", tickfont = list(size = 10)
+  )
+}
+
+ternaryAxes <- list(
+  aaxis = axis("Young"), 
+  baxis = axis("Active"), 
+  caxis = axis("Old")
+)
+
+# Initiating a plotly visualization 
+plot_ly(
+  agpop_mutated, 
+  a = ~YOUNG, 
+  b = ~ACTIVE, 
+  c = ~OLD, 
+  color = I("black"), 
+  type = "scatterternary"
+) %>%
+  layout(
+    annotations = label("Ternary Markers"), 
+    ternary = ternaryAxes
+  )
+```
+
+Now you can interactively hover and see the value of each point
+
+# Part 2: Visual Correlation Analysis
+
+# 1 Getting Started
+
+## 1.1 Install and Load R Packages
+
+```{r}
+pacman::p_load(corrplot, ggstatsplot, tidyverse)
+```
+
+## 1.2 Import Data
+
+```{r}
+wine <- read_csv("data/wine_quality.csv")
+```
+
+# 2 Building Correlation Matrix: pairs() method
+
+## 2.1 Basic Correlation Matrix
+
+```{r}
+pairs(wine[,1:11])
+```
+
+Now let us build the scatterplot matrix for column 2 to 12
+
+```{r}
+pairs(wine[,2:12])
+```
+
+## 2.2 Drawing the lower corner
+
+Since correlation matrix is symmetric, let us only show the lower half of the matrix using the code below.
+
+```{r}
+pairs(wine[,2:12], upper.panel = NULL)
+```
+
+Now let us show the upper half of the correlation matrix
+
+```{r}
+pairs(wine[,2:12], lower.panel = NULL)
+```

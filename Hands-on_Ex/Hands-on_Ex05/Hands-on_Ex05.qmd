@@ -1,0 +1,11 @@
+---
+title: "Hands-on Exercise 5"
+author: "Brigitta Karen Tsai"
+date: "February 8, 2025"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+---

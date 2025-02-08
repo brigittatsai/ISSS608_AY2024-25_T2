@@ -600,5 +600,40 @@
     "title": "Hands-on Exercise 4",
     "section": "3.4 Interactive Funnel Plot: plotly + ggplot2",
     "text": "3.4 Interactive Funnel Plot: plotly + ggplot2\n\nfp_ggplotly &lt;- ggplotly(p,\n  tooltip = c(\"label\", \n              \"x\", \n              \"y\"))\nfp_ggplotly"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#background",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#background",
+    "title": "Take-home Exercise 1",
+    "section": "1.1 Background",
+    "text": "1.1 Background"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#the-data",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#the-data",
+    "title": "Take-home Exercise 1",
+    "section": "1.2 The Data",
+    "text": "1.2 The Data\nThe following are the details of the data source for this analysis:\n\nData Source: Ship Performance Clustering Dataset\nDataset Size: 18 columns x 2,736 rows\nData format: csv file"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#the-task",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#the-task",
+    "title": "Take-home Exercise 1",
+    "section": "1.3 The Task",
+    "text": "1.3 The Task\nAs the graphical editor of the media company, an article about ship performance in the Gulf of Guinea will be written and published. Hence, this paper will include the following contents:\n\nExploratory Data Analysis of ship performance based on different underlying factors\nVisualization of key operational metrics of the ship for future performance optimizations in the maritime industry"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#load-and-install-packages",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#load-and-install-packages",
+    "title": "Take-home Exercise 1",
+    "section": "2.1 Load and Install Packages",
+    "text": "2.1 Load and Install Packages\nFor this analysis, tidyverse and ggplot2 packages will be used.\n\npacman::p_load(tidyverse, ggplot2)"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#import-data",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#import-data",
+    "title": "Take-home Exercise 1",
+    "section": "2.2 Import Data",
+    "text": "2.2 Import Data\nImport ship performance dataset to get started with the analysis.\n\nship &lt;- read_csv(\"data/Ship.csv\")\n\nRows: 2736 Columns: 18\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr   (5): Ship_Type, Route_Type, Engine_Type, Maintenance_Status, Weather_C...\ndbl  (12): Speed_Over_Ground_knots, Engine_Power_kW, Distance_Traveled_nm, D...\ndate  (1): Date\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message."
   }
 ]

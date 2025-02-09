@@ -676,7 +676,7 @@
     "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#plotting-a-static-ternary-diagram",
     "title": "Hands-on Exercise 5",
     "section": "3.1 Plotting a static ternary diagram",
-    "text": "3.1 Plotting a static ternary diagram\nUse ggtern() function from ggtern package to create a simple ternary plot\n\nggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +\n  geom_point()"
+    "text": "3.1 Plotting a static ternary diagram\nUse ggtern() function from ggtern package to create a simple ternary plot\n\nggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +\n  geom_point()\n\n\n\n\n\n\n\n\nNow let’s add colors to each category\n\nggtern(data=agpop_mutated, aes(x=YOUNG,y=ACTIVE, z=OLD)) +\n  geom_point() +\n  labs(title=\"Population structure, 2015\") +\n  theme_rgbw()"
   },
   {
     "objectID": "index.html",
@@ -684,5 +684,131 @@
     "title": "ISSS608_AY2024-25_T2",
     "section": "",
     "text": "Welcome to Brigitta Karen Tsai’s course webpage. You will find all the coursework for Visual Analytics and Applications here."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#plotting-an-interactive-ternary-diagram",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#plotting-an-interactive-ternary-diagram",
+    "title": "Hands-on Exercise 5",
+    "section": "3.2 Plotting an interactive ternary diagram",
+    "text": "3.2 Plotting an interactive ternary diagram\nThe code below create an interactive ternary plot using plot_ly() function of Plotly R\n\n# reusable function for creating annotation object\nlabel &lt;- function(txt) {\n  list(\n    text = txt, \n    x = 0.1, y = 1,\n    ax = 0, ay = 0,\n    xref = \"paper\", yref = \"paper\", \n    align = \"center\",\n    font = list(family = \"serif\", size = 15, color = \"white\"),\n    bgcolor = \"#b3b3b3\", bordercolor = \"black\", borderwidth = 2\n  )\n}\n\n# reusable function for axis formatting\naxis &lt;- function(txt) {\n  list(\n    title = txt, tickformat = \".0%\", tickfont = list(size = 10)\n  )\n}\n\nternaryAxes &lt;- list(\n  aaxis = axis(\"Young\"), \n  baxis = axis(\"Active\"), \n  caxis = axis(\"Old\")\n)\n\n# Initiating a plotly visualization \nplot_ly(\n  agpop_mutated, \n  a = ~YOUNG, \n  b = ~ACTIVE, \n  c = ~OLD, \n  color = I(\"black\"), \n  type = \"scatterternary\"\n) %&gt;%\n  layout(\n    annotations = label(\"Ternary Markers\"), \n    ternary = ternaryAxes\n  )\n\nNo scatterternary mode specifed:\n  Setting the mode to markers\n  Read more about this attribute -&gt; https://plotly.com/r/reference/#scatter-mode\n\n\n\n\n\n\nNow you can interactively hover and see the value of each point"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#install-and-load-r-packages-1",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#install-and-load-r-packages-1",
+    "title": "Hands-on Exercise 5",
+    "section": "1.1 Install and Load R Packages",
+    "text": "1.1 Install and Load R Packages\n\npacman::p_load(corrplot, ggstatsplot, tidyverse)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#import-data-1",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#import-data-1",
+    "title": "Hands-on Exercise 5",
+    "section": "1.2 Import Data",
+    "text": "1.2 Import Data\n\nwine &lt;- read_csv(\"data/wine_quality.csv\")\n\nRows: 6497 Columns: 13\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr  (1): type\ndbl (12): fixed acidity, volatile acidity, citric acid, residual sugar, chlo...\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#basic-correlation-matrix",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#basic-correlation-matrix",
+    "title": "Hands-on Exercise 5",
+    "section": "2.1 Basic Correlation Matrix",
+    "text": "2.1 Basic Correlation Matrix\n\npairs(wine[,1:11])\n\n\n\n\n\n\n\n\nNow let us build the scatterplot matrix for column 2 to 12\n\npairs(wine[,2:12])"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#drawing-the-lower-corner",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#drawing-the-lower-corner",
+    "title": "Hands-on Exercise 5",
+    "section": "2.2 Drawing the lower corner",
+    "text": "2.2 Drawing the lower corner\nSince correlation matrix is symmetric, let us only show the lower half of the matrix using the code below.\n\npairs(wine[,2:12], upper.panel = NULL)\n\n\n\n\n\n\n\n\nNow let us show the upper half of the correlation matrix\n\npairs(wine[,2:12], lower.panel = NULL)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#including-with-correlation-coefficients",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#including-with-correlation-coefficients",
+    "title": "Hands-on Exercise 5",
+    "section": "2.3 Including with Correlation Coefficients",
+    "text": "2.3 Including with Correlation Coefficients\nThe code will show the correlation coefficient of the variables pair instead of a scatter plot.\n\npanel.cor &lt;- function(x, y, digits=2, prefix=\"\", cex.cor, ...) {\nusr &lt;- par(\"usr\")\non.exit(par(usr))\npar(usr = c(0, 1, 0, 1))\nr &lt;- abs(cor(x, y, use=\"complete.obs\"))\ntxt &lt;- format(c(r, 0.123456789), digits=digits)[1]\ntxt &lt;- paste(prefix, txt, sep=\"\")\nif(missing(cex.cor)) cex.cor &lt;- 0.8/strwidth(txt)\ntext(0.5, 0.5, txt, cex = cex.cor * (1 + r) / 2)\n}\n\npairs(wine[,2:12], \n      upper.panel = panel.cor)\n\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter\nWarning in par(usr): argument 1 does not name a graphical parameter"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#the-basic-plot",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#the-basic-plot",
+    "title": "Hands-on Exercise 5",
+    "section": "3.1 The Basic Plot",
+    "text": "3.1 The Basic Plot\n\nBasic CodeStatistical Report\n\n\n\nggstatsplot::ggcorrmat(\n  data = wine, \n  cor.vars = 1:11)\n\n\n\n\n\n\n\n\n\n\n\nggstatsplot::ggcorrmat(\n  data = wine, \n  cor.vars = 1:11,\n  ggcorrplot.args = list(outline.color = \"black\", \n                         hc.order = TRUE,\n                         tl.cex = 10),\n  ggplot.component = list(\n    theme(text=element_text(size=3),\n      axis.text.x = element_text(size = 7),\n      axis.text.y = element_text(size = 7))),\n  title    = \"Correlogram for wine dataset\",\n  subtitle = \"Four pairs are no significant at p &lt; 0.05\"\n)\n\n\n\n\n\n\n\n\n\n\n\n\ncor.vars is used to compute the correlation matrix needed to build the corrgram\nggcorrplot.args provides additional (aesthetics) to be passed to ggcorrplot::ggcorrplot function. The list should avoid the following arguments since they are already being used internally: corr, method, p.mat, sig.level, ggtheme, colors, lab, pch, legend.title, digits."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#getting-started-with-corrplot",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#getting-started-with-corrplot",
+    "title": "Hands-on Exercise 5",
+    "section": "5.1 Getting Started with corrplot",
+    "text": "5.1 Getting Started with corrplot\n\nwine.cor &lt;- cor(wine[, 1:11])\n\nUse corrplot() to plot the corrgram\n\ncorrplot(wine.cor)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#working-with-visual-geometrics",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#working-with-visual-geometrics",
+    "title": "Hands-on Exercise 5",
+    "section": "5.2 Working with Visual Geometrics",
+    "text": "5.2 Working with Visual Geometrics\nIn corrplot package, there are seven visual geometrics (parameter method) can be used to encode the attribute values. They are: circle, square, ellipse, number, shade, color and pie.\n\ncorrplot(wine.cor, \n         method = \"ellipse\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#working-with-layout",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#working-with-layout",
+    "title": "Hands-on Exercise 5",
+    "section": "5.3 Working with Layout",
+    "text": "5.3 Working with Layout\ncorrplot() supports 3 layout types: full, upper or lower\n\nBasic LayoutCustomised\n\n\n\ncorrplot(wine.cor, \n         method = \"ellipse\", \n         type=\"lower\")\n\n\n\n\n\n\n\n\n\n\n\ncorrplot(wine.cor, method = \"ellipse\", type=\"lower\", diag = FALSE, tl.col = \"black\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#working-with-mixed-layout",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#working-with-mixed-layout",
+    "title": "Hands-on Exercise 5",
+    "section": "5.4 Working with Mixed Layout",
+    "text": "5.4 Working with Mixed Layout\n\ncorrplot.mixed(wine.cor, \n               lower = \"ellipse\", \n               upper = \"number\",\n               tl.pos = \"lt\",\n               diag = \"l\",\n               tl.col = \"black\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#combining-corrgram-with-the-significant-test",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#combining-corrgram-with-the-significant-test",
+    "title": "Hands-on Exercise 5",
+    "section": "5.5 Combining corrgram with the Significant Test",
+    "text": "5.5 Combining corrgram with the Significant Test\nUsing the corrplot package, we can use cor.mtest() to compute p-values and confidence interval of each pair of variables.\n\nwine.sig = cor.mtest(wine.cor, conf.level= .95)\n\n\ncorrplot(wine.cor,\n         method = \"number\",\n         type = \"lower\",\n         diag = FALSE,\n         tl.col = \"black\",\n         tl.srt = 45,\n         p.mat = wine.sig$p, # use the p-value computation here\n         sig.level = .05)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#reorder-a-corrgram",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#reorder-a-corrgram",
+    "title": "Hands-on Exercise 5",
+    "section": "5.6 Reorder a corrgram",
+    "text": "5.6 Reorder a corrgram\nMatrix reordering is important for mining the hidden structure and pattern in a corrgram. There are 4 supported sorting methods:\n\nAOE is for the angular order\nFPC is for first principal component order\nhclust is for hierarchical clustering order, hclust.method for the agglomeration method to be used:\n\nhclust.method should be one of ward, single, complete, average, mcquitty, median, or centroid\n\nalphabet for alphabetical order\n\n\ncorrplot.mixed(wine.cor, \n               lower = \"ellipse\", \n               upper = \"number\",\n               tl.pos = \"lt\",\n               diag = \"l\",\n               order=\"AOE\",\n               tl.col = \"black\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#reordering-a-correlation-matrix-using-hclust",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#reordering-a-correlation-matrix-using-hclust",
+    "title": "Hands-on Exercise 5",
+    "section": "5.7 Reordering a correlation matrix using hclust",
+    "text": "5.7 Reordering a correlation matrix using hclust\n\ncorrplot(wine.cor, \n         method = \"ellipse\", \n         tl.pos = \"lt\",\n         tl.col = \"black\",\n         order=\"hclust\",\n         hclust.method = \"ward.D\",\n         addrect = 3)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#install-and-load-packages",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#install-and-load-packages",
+    "title": "Hands-on Exercise 5",
+    "section": "1.1 Install and Load Packages",
+    "text": "1.1 Install and Load Packages\n\npacman::p_load(seriation, dendextend, heatmaply, tidyverse)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#import-data-2",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#import-data-2",
+    "title": "Hands-on Exercise 5",
+    "section": "1.2 Import Data",
+    "text": "1.2 Import Data\n\nwh &lt;- read_csv(\"data/WHData-2018.csv\")\n\nRows: 156 Columns: 12\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr  (2): Country, Region\ndbl (10): Happiness score, Whisker-high, Whisker-low, Dystopia, GDP per capi...\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#data-preparation-1",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#data-preparation-1",
+    "title": "Hands-on Exercise 5",
+    "section": "1.3 Data Preparation",
+    "text": "1.3 Data Preparation\nChange the rows by country name instead of row number\n\nrow.names(wh) &lt;- wh$Country\n\nWarning: Setting row names on a tibble is deprecated."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#transforming-the-dataframe-into-a-matrix",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#transforming-the-dataframe-into-a-matrix",
+    "title": "Hands-on Exercise 5",
+    "section": "1.4 Transforming the dataframe into a matrix",
+    "text": "1.4 Transforming the dataframe into a matrix\n\nwh1 &lt;- dplyr::select(wh, c(3, 7:12))\nwh_matrix &lt;- data.matrix(wh)"
   }
 ]

@@ -69,7 +69,7 @@ ggplot(exam_data,
   stat_halfeye(adjust = 0.5,
                justification = -0.2,
                .width = 0,
-               point_colout = NA) +
+               point_colour = NA) +
   geom_boxplot(width = .20,
                outlier.shape = NA) +
   stat_dots(side = "left",

@@ -202,7 +202,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#ship-performance-analysis" id="toc-ship-performance-analysis" class="nav-link active" data-scroll-target="#ship-performance-analysis">Ship Performance Analysis</a></li>
   <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">1 Overview</a>
   <ul class="collapse">
-  <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background">1.1 Background</a></li>
+  <li><a href="#the-background" id="toc-the-background" class="nav-link" data-scroll-target="#the-background">1.1 The Background</a></li>
   <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data">1.2 The Data</a></li>
   <li><a href="#the-task" id="toc-the-task" class="nav-link" data-scroll-target="#the-task">1.3 The Task</a></li>
   </ul></li>
@@ -211,6 +211,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#load-and-install-packages" id="toc-load-and-install-packages" class="nav-link" data-scroll-target="#load-and-install-packages">2.1 Load and Install Packages</a></li>
   <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data">2.2 Import Data</a></li>
   </ul></li>
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation">3 Data Preparation</a>
+  <ul class="collapse">
+  <li><a href="#select-variables" id="toc-select-variables" class="nav-link" data-scroll-target="#select-variables">3.1 Select Variables</a></li>
+  </ul></li>
+  <li><a href="#ship-dataframe" id="toc-ship-dataframe" class="nav-link" data-scroll-target="#ship-dataframe">Ship Dataframe</a></li>
+  <li><a href="#remove-columns" id="toc-remove-columns" class="nav-link" data-scroll-target="#remove-columns">3.2 Remove Columns</a></li>
+  <li><a href="#handling-missing-value" id="toc-handling-missing-value" class="nav-link" data-scroll-target="#handling-missing-value">3.3 Handling Missing Value</a>
+  <ul class="collapse">
+  <li><a href="#categorical-column" id="toc-categorical-column" class="nav-link" data-scroll-target="#categorical-column">3.3.1 Categorical Column</a></li>
+  <li><a href="#numerical-column" id="toc-numerical-column" class="nav-link" data-scroll-target="#numerical-column">3.3.2 Numerical Column</a></li>
+  </ul></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis">4 Exploratory Data Analysis</a></li>
   </ul>
 </nav>
     </div>
@@ -243,7 +255,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">February 8, 2025</p>
+      <p class="date-modified">February 12, 2025</p>
     </div>
   </div>
     
@@ -259,8 +271,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="overview" class="level1">
 <h1>1 Overview</h1>
-<section id="background" class="level2">
-<h2 class="anchored" data-anchor-id="background">1.1 Background</h2>
+<section id="the-background" class="level2">
+<h2 class="anchored" data-anchor-id="the-background">1.1 The Background</h2>
 </section>
 <section id="the-data" class="level2">
 <h2 class="anchored" data-anchor-id="the-data">1.2 The Data</h2>
@@ -286,7 +298,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="load-and-install-packages">2.1 Load and Install Packages</h2>
 <p>For this analysis, <strong>tidyverse</strong> and <strong>ggplot2</strong> packages will be used.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, ggrepel, patchwork, ggthemes, hrbrthemes, ggiraph,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>               plotly, DT, readxl, gifski, gapminder, gganimate, ggdist, ggridges,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               colorspace, ggstatsplot, crosstalk, FunnelPlotR, knitr, scales)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="import-data" class="level2">
@@ -306,9 +320,380 @@ date  (1): Date
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
 </div>
-
-
 </section>
+</section>
+<section id="data-preparation" class="level1">
+<h1>3 Data Preparation</h1>
+<section id="select-variables" class="level2">
+<h2 class="anchored" data-anchor-id="select-variables">3.1 Select Variables</h2>
+<p>Before we begin with the analysis, let us do some variable analysis and check the columns that we will be using for this analysis. Each row of the dataset represents the <strong>performance metrics</strong> and <strong>attributes</strong> for a specific <strong>voyage/ship</strong> over a given timeframe.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(ship)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Date"                    "Ship_Type"              
+ [3] "Route_Type"              "Engine_Type"            
+ [5] "Maintenance_Status"      "Speed_Over_Ground_knots"
+ [7] "Engine_Power_kW"         "Distance_Traveled_nm"   
+ [9] "Draft_meters"            "Weather_Condition"      
+[11] "Cargo_Weight_tons"       "Operational_Cost_USD"   
+[13] "Revenue_per_Voyage_USD"  "Turnaround_Time_hours"  
+[15] "Efficiency_nm_per_kWh"   "Seasonal_Impact_Score"  
+[17] "Weekly_Voyage_Count"     "Average_Load_Percentage"</code></pre>
+</div>
+</div>
+<p>For easier read, let us list down all the columns in the table below to analyse the data types and the description.</p>
+</section>
+</section>
+<section id="ship-dataframe" class="level1 tabset-pane">
+<h1>Ship Dataframe</h1>
+<div class="table table-striped table-hover table-bordered">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 32%">
+<col style="width: 19%">
+<col style="width: 47%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Date</td>
+<td>date</td>
+<td>timestamp of data entry</td>
+</tr>
+<tr class="even">
+<td>Ship_Type</td>
+<td>categorical</td>
+<td>types of vessel</td>
+</tr>
+<tr class="odd">
+<td>Route_Type</td>
+<td>categorical</td>
+<td>types of route</td>
+</tr>
+<tr class="even">
+<td>Engine_Type</td>
+<td>categorical</td>
+<td>types of ship engine</td>
+</tr>
+<tr class="odd">
+<td>Maintenance_Status</td>
+<td>categorical</td>
+<td>current maintenance status</td>
+</tr>
+<tr class="even">
+<td>Speed_Over_Ground_knots</td>
+<td>numerical</td>
+<td>average speed (knots)</td>
+</tr>
+<tr class="odd">
+<td>Engine_Power_kW</td>
+<td>numerical</td>
+<td>engine power output (kW)</td>
+</tr>
+<tr class="even">
+<td>Distance_Traveled_nm</td>
+<td>numerical</td>
+<td>total distance travelled (nm)</td>
+</tr>
+<tr class="odd">
+<td>Draft_meters</td>
+<td>numerical</td>
+<td>draft of the vessel (m)</td>
+</tr>
+<tr class="even">
+<td>Weather_Condition</td>
+<td>categorical</td>
+<td>weather condition during operations</td>
+</tr>
+<tr class="odd">
+<td>Cargo_Weight_tons</td>
+<td>numerical</td>
+<td>weight of goods on the ship (tons)</td>
+</tr>
+<tr class="even">
+<td>Operational_Cost_USD</td>
+<td>numerical</td>
+<td>total operational cost per voyage (USD)</td>
+</tr>
+<tr class="odd">
+<td>Revenue_per_Voyage_USD</td>
+<td>numerical</td>
+<td>total revenue generated per voyage (USD)</td>
+</tr>
+<tr class="even">
+<td>Turnaround_Time_hours</td>
+<td>numerical</td>
+<td>time taken per voyage (hours)</td>
+</tr>
+<tr class="odd">
+<td>Efficiency_nm_per_kWh</td>
+<td>numerical</td>
+<td>energy efficiency (nm/kWh)</td>
+</tr>
+<tr class="even">
+<td>Seasonal_Impact_Score</td>
+<td>numerical</td>
+<td><em>not listed in Kaggle</em></td>
+</tr>
+<tr class="odd">
+<td>Weekly_Voyage_Count</td>
+<td>integer</td>
+<td>total no. of voyage per week</td>
+</tr>
+<tr class="even">
+<td>Average_Load_Percentage</td>
+<td>percentage (%)</td>
+<td><em>not listed in Kaggle</em></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="remove-columns" class="level2">
+<h2 class="anchored" data-anchor-id="remove-columns">3.2 Remove Columns</h2>
+<p>From the table, we will keep all the categorical and numerical columns to gain further insights on this dataset. There are 3 columns that we should remove from this dataset, which are <strong>Date, Seasonal_Impact_Score</strong> and <strong>Average_Load_Percentage.</strong></p>
+<ol type="1">
+<li><strong>Date</strong>: This column is removed because it only consists of the timestamp of the data entry, which is not necessarily value-add to this analysis.</li>
+<li><strong>Seasonal_Impact_Score</strong>: This column is removed because there is no description of how the value in this column is calculated. As there is no details on the column calculation, there will be no insights gained from analysing this column.</li>
+<li><strong>Average_Load_Percentage</strong>: This column is removed because there is no description and source of the column calculation, hence, there is no need to use this column for the analysis.</li>
+</ol>
+<p>The 3 columns will be removed using the code chunk below:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ship <span class="ot">&lt;-</span> ship <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">"Date"</span>, <span class="st">"Seasonal_Impact_Score"</span>, <span class="st">"Average_Load_Percentage"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ship</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2,736 × 15
+   Ship_Type    Route_Type Engine_Type Maintenance_Status Speed_Over_Ground_kn…¹
+   &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;                               &lt;dbl&gt;
+ 1 Container S… None       Heavy Fuel… Critical                             12.6
+ 2 Fish Carrier Short-haul Steam Turb… Good                                 10.4
+ 3 Container S… Long-haul  Diesel      Fair                                 20.7
+ 4 Bulk Carrier Transocea… Steam Turb… Fair                                 21.1
+ 5 Fish Carrier Transocea… Diesel      Fair                                 13.7
+ 6 Fish Carrier Long-haul  Heavy Fuel… Fair                                 18.6
+ 7 Fish Carrier Transocea… Heavy Fuel… Critical                             20.4
+ 8 Container S… Short-haul Diesel      Critical                             23.5
+ 9 None         Coastal    Heavy Fuel… Good                                 17.3
+10 Container S… Long-haul  Diesel      Fair                                 23.2
+# ℹ 2,726 more rows
+# ℹ abbreviated name: ¹​Speed_Over_Ground_knots
+# ℹ 10 more variables: Engine_Power_kW &lt;dbl&gt;, Distance_Traveled_nm &lt;dbl&gt;,
+#   Draft_meters &lt;dbl&gt;, Weather_Condition &lt;chr&gt;, Cargo_Weight_tons &lt;dbl&gt;,
+#   Operational_Cost_USD &lt;dbl&gt;, Revenue_per_Voyage_USD &lt;dbl&gt;,
+#   Turnaround_Time_hours &lt;dbl&gt;, Efficiency_nm_per_kWh &lt;dbl&gt;,
+#   Weekly_Voyage_Count &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="handling-missing-value" class="level2">
+<h2 class="anchored" data-anchor-id="handling-missing-value">3.3 Handling Missing Value</h2>
+<section id="categorical-column" class="level3">
+<h3 class="anchored" data-anchor-id="categorical-column">3.3.1 Categorical Column</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(ship<span class="sc">$</span>Ship_Type)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  Bulk Carrier Container Ship   Fish Carrier           None         Tanker 
+           669            635            653            136            643 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(ship<span class="sc">$</span>Route_Type)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     Coastal    Long-haul         None   Short-haul Transoceanic 
+         650          686          136          626          638 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(ship<span class="sc">$</span>Engine_Type)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+              Diesel Heavy Fuel Oil (HFO)                 None 
+                 892                  853                  136 
+       Steam Turbine 
+                 855 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(ship<span class="sc">$</span>Maintenance_Status)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Critical     Fair     Good     None 
+     860      867      873      136 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(ship<span class="sc">$</span>Weather_Condition)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Calm Moderate     None    Rough 
+     893      891      136      816 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>ship <span class="ot">&lt;-</span> ship[ship<span class="sc">$</span>Ship_Type <span class="sc">!=</span> <span class="st">"None"</span>, ]</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>ship <span class="ot">&lt;-</span> ship[ship<span class="sc">$</span>Route_Type <span class="sc">!=</span> <span class="st">"None"</span>, ]</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>ship <span class="ot">&lt;-</span> ship[ship<span class="sc">$</span>Engine_Type <span class="sc">!=</span> <span class="st">"None"</span>, ]</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>ship <span class="ot">&lt;-</span> ship[ship<span class="sc">$</span>Maintenance_Status <span class="sc">!=</span> <span class="st">"None"</span>, ]</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>ship <span class="ot">&lt;-</span> ship[ship<span class="sc">$</span>Weather_Condition <span class="sc">!=</span> <span class="st">"None"</span>, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(ship)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2127   15</code></pre>
+</div>
+</div>
+</section>
+<section id="numerical-column" class="level3">
+<h3 class="anchored" data-anchor-id="numerical-column">3.3.2 Numerical Column</h3>
+<p>In this section, we will further clean numerical data type column to ensure the entire dataset is clean. The code chunks below will check the sum of null values of each numerical column.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(ship<span class="sc">$</span>Speed_Over_Ground_knots))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(ship<span class="sc">$</span>Engine_Power_kW))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(ship<span class="sc">$</span>Distance_Traveled_nm))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(ship<span class="sc">$</span>Draft_meters))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(ship<span class="sc">$</span>Cargo_Weight_tons))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(ship<span class="sc">$</span>Operational_Cost_USD))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(ship<span class="sc">$</span>Revenue_per_Voyage_USD))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(ship<span class="sc">$</span>Turnaround_Time_hours))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(ship<span class="sc">$</span>Efficiency_nm_per_kWh))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(ship<span class="sc">$</span>Weekly_Voyage_Count))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(ship)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 2,127
+Columns: 15
+$ Ship_Type               &lt;chr&gt; "Fish Carrier", "Container Ship", "Bulk Carrie…
+$ Route_Type              &lt;chr&gt; "Short-haul", "Long-haul", "Transoceanic", "Tr…
+$ Engine_Type             &lt;chr&gt; "Steam Turbine", "Diesel", "Steam Turbine", "D…
+$ Maintenance_Status      &lt;chr&gt; "Good", "Fair", "Fair", "Fair", "Fair", "Criti…
+$ Speed_Over_Ground_knots &lt;dbl&gt; 10.38758, 20.74975, 21.05510, 13.74278, 18.616…
+$ Engine_Power_kW         &lt;dbl&gt; 1796.0574, 1648.5567, 915.2618, 1089.7218, 217…
+$ Distance_Traveled_nm    &lt;dbl&gt; 1060.4864, 658.8741, 1126.8225, 1445.2812, 723…
+$ Draft_meters            &lt;dbl&gt; 14.653083, 7.199261, 11.789063, 9.727833, 14.9…
+$ Weather_Condition       &lt;chr&gt; "Rough", "Moderate", "Moderate", "Moderate", "…
+$ Cargo_Weight_tons       &lt;dbl&gt; 162.3947, 178.0409, 1737.3853, 260.5951, 1912.…
+$ Operational_Cost_USD    &lt;dbl&gt; 483388.00, 448543.40, 261349.61, 287718.38, 18…
+$ Revenue_per_Voyage_USD  &lt;dbl&gt; 883765.79, 394018.75, 87551.38, 676121.46, 776…
+$ Turnaround_Time_hours   &lt;dbl&gt; 63.24820, 49.41815, 22.40911, 64.15823, 47.476…
+$ Efficiency_nm_per_kWh   &lt;dbl&gt; 0.2903614, 0.4995945, 0.7029057, 1.3313431, 1.…
+$ Weekly_Voyage_Count     &lt;dbl&gt; 6, 9, 1, 8, 7, 3, 6, 2, 9, 4, 3, 7, 7, 2, 4, 3…</code></pre>
+</div>
+</div>
+<p>average operational cost per ship type, average revenue per ship type, stats of voyage per week</p>
+</section>
+</section>
+<section id="exploratory-data-analysis" class="level1">
+<h1>4 Exploratory Data Analysis</h1>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Limit 1</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Limit 2</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>avg_cost <span class="ot">&lt;-</span> ship <span class="sc">%&gt;%</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Ship_Type) <span class="sc">%&gt;%</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Average_Cost =</span> <span class="fu">mean</span>(Operational_Cost_USD, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> avg_cost, <span class="fu">aes</span>(<span class="at">x =</span> Ship_Type, <span class="at">y =</span> Average_Cost, <span class="at">fill =</span> Ship_Type)) <span class="sc">+</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">300000</span>), <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Operational Cost by Ship Type"</span>, <span class="at">x =</span> <span class="st">"Ship Type"</span>, <span class="at">y =</span> <span class="st">"Average Cost"</span>) <span class="sc">+</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span> </span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>avg_cost <span class="ot">&lt;-</span> ship <span class="sc">%&gt;%</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Ship_Type) <span class="sc">%&gt;%</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Average_Cost =</span> <span class="fu">mean</span>(Operational_Cost_USD, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>max <span class="ot">&lt;-</span> <span class="fu">max</span>(ship<span class="sc">$</span>Operational_Cost_USD)</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> avg_cost, <span class="fu">aes</span>(<span class="at">x =</span> Ship_Type, <span class="at">y =</span> Average_Cost, <span class="at">fill =</span> Ship_Type)) <span class="sc">+</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, max), <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Operational Cost by Ship Type"</span>, <span class="at">x =</span> <span class="st">"Ship Type"</span>, <span class="at">y =</span> <span class="st">"Average Cost"</span>) <span class="sc">+</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span> </span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
 </section>
 
 </main> <!-- /main -->

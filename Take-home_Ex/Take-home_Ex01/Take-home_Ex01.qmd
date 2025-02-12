@@ -14,7 +14,7 @@ execute:
 
 # 1 Overview
 
-## 1.1 Background
+## 1.1 The Background
 
 ## 1.2 The Data
 
@@ -38,7 +38,9 @@ As the graphical editor of the media company, an article about ship performance 
 For this analysis, **tidyverse** and **ggplot2** packages will be used.
 
 ```{r}
-pacman::p_load(tidyverse, ggplot2)
+pacman::p_load(tidyverse, ggrepel, patchwork, ggthemes, hrbrthemes, ggiraph,
+               plotly, DT, readxl, gifski, gapminder, gganimate, ggdist, ggridges,
+               colorspace, ggstatsplot, crosstalk, FunnelPlotR, knitr, scales)
 ```
 
 ## 2.2 Import Data
@@ -48,3 +50,181 @@ Import ship performance dataset to get started with the analysis.
 ```{r}
 ship <- read_csv("data/Ship.csv")
 ```
+
+# 3 Data Preparation
+
+## 3.1 Select Variables
+
+Before we begin with the analysis, let us do some variable analysis and check the columns that we will be using for this analysis. Each row of the dataset represents the **performance metrics** and **attributes** for a specific **voyage/ship** over a given timeframe.
+
+```{r}
+colnames(ship)
+```
+
+For easier read, let us list down all the columns in the table below to analyse the data types and the description.
+
+::: tabset-pane
+# Ship Dataframe
+
+::: {.table .table-striped .table-hover .table-bordered}
+| Column Name             | Type           | Description                              |
+|-----------------------|--------------|----------------------------------|
+| Date                    | date           | timestamp of data entry                  |
+| Ship_Type               | categorical    | types of vessel                          |
+| Route_Type              | categorical    | types of route                           |
+| Engine_Type             | categorical    | types of ship engine                     |
+| Maintenance_Status      | categorical    | current maintenance status               |
+| Speed_Over_Ground_knots | numerical      | average speed (knots)                    |
+| Engine_Power_kW         | numerical      | engine power output (kW)                 |
+| Distance_Traveled_nm    | numerical      | total distance travelled (nm)            |
+| Draft_meters            | numerical      | draft of the vessel (m)                  |
+| Weather_Condition       | categorical    | weather condition during operations      |
+| Cargo_Weight_tons       | numerical      | weight of goods on the ship (tons)       |
+| Operational_Cost_USD    | numerical      | total operational cost per voyage (USD)  |
+| Revenue_per_Voyage_USD  | numerical      | total revenue generated per voyage (USD) |
+| Turnaround_Time_hours   | numerical      | time taken per voyage (hours)            |
+| Efficiency_nm_per_kWh   | numerical      | energy efficiency (nm/kWh)               |
+| Seasonal_Impact_Score   | numerical      | *not listed in Kaggle*                   |
+| Weekly_Voyage_Count     | integer        | total no. of voyage per week             |
+| Average_Load_Percentage | percentage (%) | *not listed in Kaggle*                   |
+:::
+:::
+
+## 3.2 Remove Columns
+
+From the table, we will keep all the categorical and numerical columns to gain further insights on this dataset. There are 3 columns that we should remove from this dataset, which are **Date, Seasonal_Impact_Score** and **Average_Load_Percentage.**
+
+1.  **Date**: This column is removed because it only consists of the timestamp of the data entry, which is not necessarily value-add to this analysis.
+2.  **Seasonal_Impact_Score**: This column is removed because there is no description of how the value in this column is calculated. As there is no details on the column calculation, there will be no insights gained from analysing this column.
+3.  **Average_Load_Percentage**: This column is removed because there is no description and source of the column calculation, hence, there is no need to use this column for the analysis.
+
+The 3 columns will be removed using the code chunk below:
+
+```{r}
+ship <- ship %>% select(-c("Date", "Seasonal_Impact_Score", "Average_Load_Percentage"))
+```
+
+```{r}
+ship
+```
+
+## 3.3 Handling Missing Value
+
+### 3.3.1 Categorical Column
+
+```{r}
+table(ship$Ship_Type)
+```
+
+```{r}
+table(ship$Route_Type)
+```
+
+```{r}
+table(ship$Engine_Type)
+```
+
+```{r}
+table(ship$Maintenance_Status)
+```
+
+```{r}
+table(ship$Weather_Condition)
+```
+
+```{r}
+ship <- ship[ship$Ship_Type != "None", ]
+ship <- ship[ship$Route_Type != "None", ]
+ship <- ship[ship$Engine_Type != "None", ]
+ship <- ship[ship$Maintenance_Status != "None", ]
+ship <- ship[ship$Weather_Condition != "None", ]
+```
+
+```{r}
+dim(ship)
+```
+
+### 3.3.2 Numerical Column
+
+In this section, we will further clean numerical data type column to ensure the entire dataset is clean. The code chunks below will check the sum of null values of each numerical column.
+
+```{r}
+sum(is.na(ship$Speed_Over_Ground_knots))
+```
+
+```{r}
+sum(is.na(ship$Engine_Power_kW))
+```
+
+```{r}
+sum(is.na(ship$Distance_Traveled_nm))
+```
+
+```{r}
+sum(is.na(ship$Draft_meters))
+```
+
+```{r}
+sum(is.na(ship$Cargo_Weight_tons))
+```
+
+```{r}
+sum(is.na(ship$Operational_Cost_USD))
+```
+
+```{r}
+sum(is.na(ship$Revenue_per_Voyage_USD))
+```
+
+```{r}
+sum(is.na(ship$Turnaround_Time_hours))
+```
+
+```{r}
+sum(is.na(ship$Efficiency_nm_per_kWh))
+```
+
+```{r}
+sum(is.na(ship$Weekly_Voyage_Count))
+```
+
+```{r}
+glimpse(ship)
+```
+
+average operational cost per ship type, average revenue per ship type, stats of voyage per week
+
+# 4 Exploratory Data Analysis
+
+::: panel-tabset
+
+## Limit 1
+```{r}
+avg_cost <- ship %>%
+  group_by(Ship_Type) %>%
+  summarise(Average_Cost = mean(Operational_Cost_USD, na.rm = TRUE))
+
+ggplot(data = avg_cost, aes(x = Ship_Type, y = Average_Cost, fill = Ship_Type)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  scale_y_continuous(labels = comma, limits = c(0, 300000), expand = c(0, 0)) +
+  labs(title = "Average Operational Cost by Ship Type", x = "Ship Type", y = "Average Cost") +
+  theme_light() + 
+  theme(aspect.ratio = 1)
+```
+## Limit 2
+```{r}
+avg_cost <- ship %>%
+  group_by(Ship_Type) %>%
+  summarise(Average_Cost = mean(Operational_Cost_USD, na.rm = TRUE))
+
+max <- max(ship$Operational_Cost_USD)
+
+ggplot(data = avg_cost, aes(x = Ship_Type, y = Average_Cost, fill = Ship_Type)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  scale_y_continuous(labels = comma, limits = c(0, max), expand = c(0, 0)) +
+  labs(title = "Average Operational Cost by Ship Type", x = "Ship Type", y = "Average Cost") +
+  theme_light() + 
+  theme(aspect.ratio = 1)
+```
+
+:::

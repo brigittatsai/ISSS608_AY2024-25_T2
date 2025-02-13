@@ -68,7 +68,7 @@ For easier read, let us list down all the columns in the table below to analyse 
 
 ::: {.table .table-striped .table-hover .table-bordered}
 | Column Name             | Type           | Description                              |
-|-----------------------|--------------|----------------------------------|
+|-------------------------|----------------|------------------------------------------|
 | Date                    | date           | timestamp of data entry                  |
 | Ship_Type               | categorical    | types of vessel                          |
 | Route_Type              | categorical    | types of route                           |
@@ -194,14 +194,61 @@ glimpse(ship)
 
 average operational cost per ship type, average revenue per ship type, stats of voyage per week
 
+## 3.4 Check for Outliers in Numerical Column
+
+There are total of 10 numerical columns that we can use for our statistical analysis. In this section, we will do an individual column check to see whether there is outliers affecting the column of the dataset.
+
+```{r}
+boxplot.stats(ship$Speed_Over_Ground_knots)$out
+```
+
+```{r}
+boxplot.stats(ship$Engine_Power_kW)$out
+```
+
+```{r}
+boxplot.stats(ship$Distance_Traveled_nm)$out
+```
+
+```{r}
+boxplot.stats(ship$Draft_meters)$out
+```
+
+```{r}
+boxplot.stats(ship$Operational_Cost_USD)$out
+```
+
+```{r}
+boxplot.stats(ship$Cargo_Weight_tons)$out
+```
+
+```{r}
+boxplot.stats(ship$Revenue_per_Voyage_USD)$out
+```
+
+```{r}
+boxplot.stats(ship$Turnaround_Time_hours)$out
+```
+
+```{r}
+boxplot.stats(ship$Efficiency_nm_per_kWh)$out
+```
+
+```{r}
+boxplot.stats(ship$Weekly_Voyage_Count)$out
+```
+
+The result from the codes above shows that there are no potential outliers affecting the dataset.
+
 # 4 Exploratory Data Analysis
 
 ## 4.1 Analysing Cost of Ship Operations
-::: panel-tabset
 
+::: panel-tabset
 ## Operational Cost
 
-In the code chunk below, we will show the average operational cost according to the ship type. We will set the maximum limit of the y-axis to 300,000. 
+In the code chunk below, we will show the average operational cost according to the ship type. We will set the maximum limit of the y-axis to 300,000.
+
 ```{r}
 avg_cost <- ship %>%
   group_by(Ship_Type) %>%
@@ -214,9 +261,11 @@ ggplot(data = avg_cost, aes(x = Ship_Type, y = Average_Cost, fill = Ship_Type)) 
   theme_light() + 
   theme(aspect.ratio = 1)
 ```
-From the bar chart, you can roughly see that on average, container ship has the highest cost for operations. But there is not much difference highlighted between each ship type. 
+
+From the bar chart, you can roughly see that on average, container ship has the highest cost for operations. But there is not much difference highlighted between each ship type.
 
 ## Details
+
 ```{r}
 range(ship$Operational_Cost_USD)
 ```
@@ -225,20 +274,17 @@ range(ship$Operational_Cost_USD)
 ggplot(ship,
        aes(x = Ship_Type,
            y = Operational_Cost_USD)) +
-  stat_halfeye(adjust = 0.5,
-               justification = -0.2,
-               .width = 0,
-               point_colour = NA) +
   geom_boxplot(width = .2,
-               outlier.shape = 17,
-               alpha = .5,
-               position = position_dodge(width = 1)) +
+               outlier.colour = "red") +
   stat_dots(side = "left",
             justification = 1.2,
-            binwidth = 50,
-            dotsize = 2) +
+            binwidth = 1000,
+            dotsize = 7) +
   scale_y_continuous(labels = comma, limits = c(0, 500000), expand = c(0, 0))
 
 ```
-
 :::
+
+```{r}
+
+```

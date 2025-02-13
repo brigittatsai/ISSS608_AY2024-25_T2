@@ -382,3 +382,596 @@ wh_matrix <- data.matrix(wh)
 ```
 
 # 2 Static Heatmap
+
+List of R Packages to draw static heatmaps:
+
+1.  heatmap() of R stats package
+2.  heatmap.2() of gplots R package
+3.  phearmap() of pheatmap R packace
+4.  ComplexHeatmap package of R/Bioconductor package
+5.  superheat package
+
+## 2.1 heatmap() of R Stats
+
+```{r}
+wh_heatmap <- heatmap(wh_matrix,
+                      Rowv=NA, Colv=NA)
+```
+
+heatmap() plots a cluster heatmap by default, the arguments Rowv=NA and Colv=NA are used to switch off the option of plotting the row and column dendograms.
+
+To plot a cluster heatmap, use the default code below:
+
+```{r}
+wh_heatmap <- heatmap(wh_matrix)
+```
+
+The code chunk below is used to normalise the matrix column-wise.
+
+```{r}
+wh_heatmap <- heatmap(wh_matrix,
+                      scale="column",
+                      cexRow = 0.6, 
+                      cexCol = 0.8,
+                      margins = c(10, 4))
+```
+
+# 3 Creating Interactive Heatmap
+
+**heatmaply** is a package to build interactive cluster heatmap that can be shared online as a stand-alone HTML file.
+
+## 3.1 Working with heatmaply
+
+```{r}
+heatmaply(mtcars)
+```
+
+The code chunk below is to create an interactive heatmap using heatmaply package
+
+```{r}
+heatmaply(wh_matrix[, -c(1, 2, 4, 5)])
+```
+
+## 3.2 Data Transformation
+
+When doing multivariate analysis, we need to do data transformation as different variables has different ranges. There are 3 main data transformations supported by **heatmaply()**, such as scale, normalise and percentize
+
+### 3.2.1 Scaling Method
+
+When all variables are from a **normal distribution**, then scaling would bring them all close to the standard normal distribution. In this case, each value would reflect the distance from the mean in units of standard deviation.
+
+The code chunk below is used to scale variable columnwise
+
+```{r}
+heatmaply(wh_matrix[, -c(1, 2, 4, 5)],
+          scale = "column")
+```
+
+### 3.2.2 Normalising Method
+
+When variables in the data comes from different/ **non-normal distributions**, the normalize function can be used to bring data to the 0 to 1 scale by subtracting the minimum and dividing by the maximum of all observations.
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]))
+```
+
+### 3.3.3 Precentising Method
+
+This method is the percent of observations to help each value to have a clear interpretation.
+
+```{r}
+heatmaply(percentize(wh_matrix[, -c(1, 2, 4, 5)]))
+```
+
+## 3.3 Clustering Algorithm
+
+**heatmaply** supports a variety of hierarchical clustering algorithm. The main arguments are:
+
+1.  distfun: function used to compute the distance (dissimilarity) between both rows and columns. There are 3 options, "pearson", "spearman" and "kendall"
+2.  hclustfun: used to compute the hierarchical clustering when Rowv or Colv are not dendograms
+3.  dist_method default is NULL, which results in "euclidean" to be used
+4.  hclust_method default is NULL, which results in "complete" method to be used
+
+## 3.4 Manual Approach
+
+In the code below, the heatmap is plotted using hierarchical clustering algorithm using **Euclidean distance** and **ward.D** method
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          dist_method = "euclidean",
+          hclust_method = "ward.D")
+```
+
+## 3.5 Statistical Approach
+
+To determine the best clustering method and the number of clusters, we will use **dend_expend()** and **find_k()** functions of the **dendextend** package
+
+```{r}
+wh_d <- dist(normalize(wh_matrix[, -c(1, 2, 4, 5)]), method = "euclidean")
+dend_expend(wh_d)[[3]]
+```
+
+Next, determine the optimal number of clusters
+
+```{r}
+wh_clust <- hclust(wh_d, method = "average")
+num_k <- find_k(wh_clust)
+plot(num_k)
+```
+
+From the chart above, we can conclude that k=3 is optimal. The code below will plot the hierarchical clustering heatmap
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          dist_method = "euclidean",
+          hclust_method = "average",
+          k_row = 3)
+```
+
+## 3.6 Seriation
+
+**heatmaply** uses seriation package to find the optimal ordering of rows and columns.
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "OLO")
+```
+
+The default option is **OLO** (Optimal Leaf Ordering). Another option is **GW** (Gruvaeus and Wainer) which aims for the same goal but uses a potentially faster heuristic.
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "GW")
+```
+
+The code chunk below will try the **mean** option, which will give the default output from th e heatmap function
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "mean")
+```
+
+**none** will give dendograms without any rotation
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "none")
+```
+
+## 3.7 Working with Colour Palettes
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "none",
+          colors = Blues)
+```
+
+## 3.8 The Finishing Touch
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          Colv=NA,
+          seriate = "none",
+          colors = Blues,
+          k_row = 5,
+          margins = c(NA,200,60,NA),
+          fontsize_row = 4,
+          fontsize_col = 5,
+          main="World Happiness Score and Variables by Country, 2018 \nDataTransformation using Normalise Method",
+          xlab = "World Happiness Indicators",
+          ylab = "World Countries"
+          )
+```
+
+# Part 4: Visual Multivariate Analysis
+
+# 1 Getting Started
+
+## 1.1 Install and Load R Packages
+
+```{r}
+pacman::p_load(GGally, parallelPlot, tidyverse)
+```
+
+## 1.2 Data Preparation
+
+```{r}
+wh <- read_csv("data/WHData-2018.csv")
+```
+
+# 2 Plotting Static Parallel Coordinates Plot
+
+In this section, we will use **ggparcoord()** of **GGally** package.
+
+## 2.1 Plotting a Simple Parallel Coordinates
+
+```{r}
+ggparcoord(data = wh,
+           columns = c(7:12))
+```
+
+## 2.2 Plotting a Parallel Coordinates with Boxplot
+
+```{r}
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Parallel Coordinates Plot of World Happiness Variables")
+```
+
+## 2.3 Parallel Coordinates with Facet
+
+The code chunk below will use **facet_wrap()** of **ggplot2** to plot 10 small multiple parallel coordinates plots.
+
+```{r}
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Multiple Parallel Coordinates Plots of World Happiness Variables by Region") +
+  facet_wrap(~ Region)
+```
+
+## 2.4 Rotating x-axis text label
+
+```{r}
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Multiple Parallel Coordinates Plots of World Happiness Variables by Region") +
+  facet_wrap(~ Region) + 
+  theme(axis.text.x = element_text(angle = 30))
+```
+
+## 2.5 Adjusting the rotated x-axis text label
+
+```{r}
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Multiple Parallel Coordinates Plots of World Happines Variables by Region") +
+  facet_wrap(~ Region) + 
+  theme(axis.text.x = element_text(angle = 30, hjust=1))
+```
+
+# 3 Plotting Interactive Parallel Coordinates Plot: parallelPlot methods
+
+**parallelPlot** is an R package designed to plot parallel coordinates plot.
+
+## 3.1 The Basic Plot
+
+```{r}
+wh <- wh %>%
+  select("Happiness score", c(7:12))
+parallelPlot(wh,
+             width = 320,
+             height = 250)
+```
+
+## 3.2 Rotate Axis Label
+
+```{r}
+parallelPlot(wh,
+             rotateTitle = TRUE)
+```
+
+## 3.3 Changing the Colour Scheme
+
+```{r}
+parallelPlot(wh,
+             continuousCS = "YlOrRd",
+             rotateTitle = TRUE)
+```
+
+## 3.4 Parallel Coordinates Plot with Histogram
+
+```{r}
+histoVisibility <- rep(TRUE, ncol(wh))
+parallelPlot(wh,
+             rotateTitle = TRUE,
+             histoVisibility = histoVisibility)
+```
+
+# Part 5: Treemap Visualisation with R
+
+# 1 Getting Started
+
+## 1.1 Install and Load R Packages
+
+```{r}
+pacman::p_load(treemap, treemapify, tidyverse) 
+```
+
+## 1.2 Import Data
+
+```{r}
+realis2018 <- read_csv("data/realis2018.csv")
+```
+
+## 1.3 Data Wrangling and Manipulation
+
+-   group transaction records by *Project Name*, *Planning Region*, *Planning Area*, *Property Type* and *Type of Sale*, and
+
+-   compute *Total Unit Sold*, *Total Area*, *Median Unit Price* and *Median Transacted Price* by applying appropriate summary statistics on *No. of Units*, *Area (sqm)*, *Unit Price (\$ psm)* and *Transacted Price (\$)* respectively.
+
+Two key verbs of **dplyr** package, namely: *group_by()* and *summarize()* will be used to perform these steps.
+
+*group_by()* breaks down a data.frame into specified groups of rows. When you then apply the verbs above on the resulting object they’ll be automatically applied “by group”.
+
+Grouping affects the verbs as follows:
+
+-   grouped *select()* is the same as ungrouped *select()*, except that grouping variables are always retained.
+
+-   grouped *arrange()* is the same as ungrouped; unless you set *.by_group = TRUE*, in which case it orders first by the grouping variables.
+
+-   *mutate()* and *filter()* are most useful in conjunction with window functions (like *rank()*, or *min(x) == x*). They are described in detail in vignette(“window-functions”).
+
+-   *sample_n()* and *sample_frac()* sample the specified number/fraction of rows in each group.
+
+-   *summarise()* computes the summary for each group.
+
+In our case, *group_by()* will used together with *summarise()* to derive the summarised data.frame.
+
+## 1.4 Grouped Summaries without the Pipe
+
+```{r}
+realis2018_grouped <- group_by(realis2018, `Project Name`,
+                               `Planning Region`, `Planning Area`, 
+                               `Property Type`, `Type of Sale`)
+realis2018_summarised <- summarise(realis2018_grouped, 
+                          `Total Unit Sold` = sum(`No. of Units`, na.rm = TRUE),
+                          `Total Area` = sum(`Area (sqm)`, na.rm = TRUE),
+                          `Median Unit Price ($ psm)` = median(`Unit Price ($ psm)`, na.rm = TRUE), 
+                          `Median Transacted Price` = median(`Transacted Price ($)`, na.rm = TRUE))
+```
+
+## 1.5 Grouped Summaries with the Pipe
+
+```{r}
+realis2018_summarised <- realis2018 %>% 
+  group_by(`Project Name`,`Planning Region`, 
+           `Planning Area`, `Property Type`, 
+           `Type of Sale`) %>%
+  summarise(`Total Unit Sold` = sum(`No. of Units`, na.rm = TRUE), 
+            `Total Area` = sum(`Area (sqm)`, na.rm = TRUE),
+            `Median Unit Price ($ psm)` = median(`Unit Price ($ psm)`, na.rm = TRUE),
+            `Median Transacted Price` = median(`Transacted Price ($)`, na.rm = TRUE))
+```
+
+# 2 Designing Treemap with treemap Package
+
+## 2.1 Designing a static treemap
+
+Select the records and assign it to a variable
+
+```{r}
+realis2018_selected <- realis2018_summarised %>%
+  filter(`Property Type` == "Condominium", `Type of Sale` == "Resale")
+```
+
+## 2.2 Using the basic arguments
+
+```{r}
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+
+Things to learn from the three arguments used:
+
+-   index
+
+    -   The index vector must consist of at least two column names or else no hierarchy treemap will be plotted.
+
+    -   If multiple column names are provided, such as the code chunk above, the first name is the highest aggregation level, the second name the second highest aggregation level, and so on.
+
+-   vSize
+
+    -   The column must not contain negative values. This is because it’s vaues will be used to map the sizes of the rectangles of the treemaps.
+
+## 2.3 Working with vColor and type arguments
+
+```{r}
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type = "value",
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+
+The rectangles with different green intensity represents the median unit prices, while the legend shows that the values are binned into 10 bins.
+
+## 2.4 The "value" type treemap
+
+```{r}
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="value",
+        palette="RdYlBu", 
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+
+-   although the colour palette used is RdYlBu but there are no red rectangles in the treemap above. This is because all the median unit prices are positive.
+
+-   The reason why we see only 5000 to 45000 in the legend is because the *range* argument is by default c(min(values, max(values)) with some pretty rounding.
+
+## 2.5 The "manual" type treemap
+
+In the manual type, the value range is mapped linearly to the colour palette
+
+```{r}
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="manual",
+        palette="RdYlBu", 
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+
+The colour used in this plot is quite confusing. We shouldnt use multiple colours when all the values are either all positive or all negative.
+
+Use single color palette with different intensity
+
+```{r}
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="manual",
+        palette="Blues", 
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+
+## 2.6 Treemap Layout
+
+**treemap()** supports 2 popular layouts: **squarified** and **pivotSize** (default).
+
+## 2.7 Working with *algorithm* argument
+
+```{r}
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="manual",
+        palette="Blues", 
+        algorithm = "squarified",
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+
+## 2.8 Using sortID
+
+```{r}
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="manual",
+        palette="Blues", 
+        algorithm = "pivotSize",
+        sortID = "Median Transacted Price",
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+
+# 3 Designing Treemap using treemapify Package
+
+**treemapify** is an R package to draw treemaps in **ggplot2**.
+
+## 3.1 Designing a basic treemap
+
+```{r}
+ggplot(data=realis2018_selected, 
+       aes(area = `Total Unit Sold`,
+           fill = `Median Unit Price ($ psm)`),
+       layout = "scol",
+       start = "bottomleft") + 
+  geom_treemap() +
+  scale_fill_gradient(low = "light blue", high = "blue")
+```
+
+## 3.2 Defining Hierarchy
+
+Group by planning region
+
+```{r}
+ggplot(data=realis2018_selected, 
+       aes(area = `Total Unit Sold`,
+           fill = `Median Unit Price ($ psm)`,
+           subgroup = `Planning Region`),
+       start = "topleft") + 
+  geom_treemap()
+```
+
+Group by planning area
+
+```{r}
+ggplot(data=realis2018_selected, 
+       aes(area = `Total Unit Sold`,
+           fill = `Median Unit Price ($ psm)`,
+           subgroup = `Planning Region`,
+           subgroup2 = `Planning Area`)) + 
+  geom_treemap()
+```
+
+Add boundary line
+
+```{r}
+ggplot(data=realis2018_selected, 
+       aes(area = `Total Unit Sold`,
+           fill = `Median Unit Price ($ psm)`,
+           subgroup = `Planning Region`,
+           subgroup2 = `Planning Area`)) + 
+  geom_treemap() +
+  geom_treemap_subgroup2_border(colour = "gray40",
+                                size = 2) +
+  geom_treemap_subgroup_border(colour = "gray20")
+```
+
+# 4 Designing Interactive Treemap using d3treeR
+
+## 4.1 Installing d3treeR Package
+
+```{r}
+#| eval: False
+library(devtools)
+install_github("timelyportfolio/d3treeR")
+```
+
+```{r}
+#| eval: False
+library(d3Tree)
+```
+
+## 4.2 Designing an Interactive Treemap
+
+The code below will have 2 processes
+
+1.  **treemap()** will be used to build a treemap by selecting variables
+
+```{r}
+tm <- treemap(realis2018_summarised,
+        index=c("Planning Region", "Planning Area"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="value",
+        title="Private Residential Property Sold, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+
+1.  **d3tree()** will be used to build an interactive treemap
+
+```{r}
+d3tree(tm,rootname = "Singapore" )
+```

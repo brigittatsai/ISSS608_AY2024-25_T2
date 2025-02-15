@@ -843,8 +843,8 @@
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#analysing-cost-of-ship-operations",
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#analysing-cost-of-ship-operations",
     "title": "Take-home Exercise 1",
-    "section": "4.1 Analysing Cost of Ship Operations",
-    "text": "4.1 Analysing Cost of Ship Operations\n\nOperational CostDetails\n\n\nIn the code chunk below, we will show the average operational cost according to the ship type. We will set the maximum limit of the y-axis to 300,000.\n\navg_cost &lt;- ship %&gt;%\n  group_by(Ship_Type) %&gt;%\n  summarise(Average_Cost = mean(Operational_Cost_USD, na.rm = TRUE))\n\nggplot(data = avg_cost, aes(x = Ship_Type, y = Average_Cost, fill = Ship_Type)) +\n  geom_bar(stat = \"identity\", fill = \"steelblue\") +\n  scale_y_continuous(labels = comma, limits = c(0, 300000), expand = c(0, 0)) +\n  labs(title = \"Average Operational Cost by Ship Type\", x = \"Ship Type\", y = \"Average Cost\") +\n  theme_light() + \n  theme(aspect.ratio = 1)\n\n\n\n\n\n\n\n\nFrom the bar chart, you can roughly see that on average, container ship has the highest cost for operations. But there is not much difference highlighted between each ship type.\n\n\n\nrange(ship$Operational_Cost_USD)\n\n[1]  10097.44 499734.87\n\n\n\nggplot(ship,\n       aes(x = Ship_Type,\n           y = Operational_Cost_USD)) +\n  geom_boxplot(width = .2,\n               outlier.colour = \"red\") +\n  stat_dots(side = \"left\",\n            justification = 1.2,\n            binwidth = 1000,\n            dotsize = 7) +\n  scale_y_continuous(labels = comma, limits = c(0, 500000), expand = c(0, 0))"
+    "section": "4.2 Analysing Cost of Ship Operations",
+    "text": "4.2 Analysing Cost of Ship Operations\n\nOperational CostDetails\n\n\nIn the code chunk below, we will show the average operational cost according to the ship type. We will set the maximum limit of the y-axis to 300,000.\n\navg_cost &lt;- ship %&gt;%\n  group_by(Ship_Type) %&gt;%\n  summarise(Average_Cost = mean(Operational_Cost_USD, na.rm = TRUE))\n\nggplot(data = avg_cost, aes(x = Ship_Type, y = Average_Cost, fill = Ship_Type)) +\n  geom_bar(stat = \"identity\", fill = \"steelblue\") +\n  scale_y_continuous(labels = comma, limits = c(0, 300000), expand = c(0, 0)) +\n  labs(title = \"Average Operational Cost by Ship Type\", x = \"Ship Type\", y = \"Average Cost\") +\n  theme_light() + \n  theme(aspect.ratio = 1)\n\n\n\n\n\n\n\n\nFrom the bar chart, you can roughly see that on average, container ship has the highest cost for operations. But there is not much difference highlighted between each ship type.\n\n\n\nrange(ship$Operational_Cost_USD)\n\n[1]  10097.44 499734.87\n\n\n\nggplot(ship,\n       aes(x = Ship_Type,\n           y = Operational_Cost_USD)) +\n  geom_boxplot(width = .2,\n               outlier.colour = \"red\") +\n  stat_dots(side = \"left\",\n            justification = 1.2,\n            binwidth = 1000,\n            dotsize = 7) +\n  scale_y_continuous(labels = comma, limits = c(0, 500000), expand = c(0, 0))\n\n\n\n\n\n\n\n\n\n\n\n\nmax(ship$Revenue_per_Voyage_USD)\n\n[1] 999811.9\n\n\n\nggplot(data = ship, aes(x = Operational_Cost_USD)) + \n  geom_histogram(bins = 50,\n                 color = \"black\",\n                 fill = \"grey\")"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#heatmap-of-r-stats",
@@ -1097,5 +1097,26 @@
     "title": "Hands-on Exercise 5",
     "section": "3.2 Defining Hierarchy",
     "text": "3.2 Defining Hierarchy\nGroup by planning region\n\nggplot(data=realis2018_selected, \n       aes(area = `Total Unit Sold`,\n           fill = `Median Unit Price ($ psm)`,\n           subgroup = `Planning Region`),\n       start = \"topleft\") + \n  geom_treemap()\n\n\n\n\n\n\n\n\nGroup by planning area\n\nggplot(data=realis2018_selected, \n       aes(area = `Total Unit Sold`,\n           fill = `Median Unit Price ($ psm)`,\n           subgroup = `Planning Region`,\n           subgroup2 = `Planning Area`)) + \n  geom_treemap()\n\n\n\n\n\n\n\n\nAdd boundary line\n\nggplot(data=realis2018_selected, \n       aes(area = `Total Unit Sold`,\n           fill = `Median Unit Price ($ psm)`,\n           subgroup = `Planning Region`,\n           subgroup2 = `Planning Area`)) + \n  geom_treemap() +\n  geom_treemap_subgroup2_border(colour = \"gray40\",\n                                size = 2) +\n  geom_treemap_subgroup_border(colour = \"gray20\")"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#check-for-outliers-in-numerical-column",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#check-for-outliers-in-numerical-column",
+    "title": "Take-home Exercise 1",
+    "section": "3.4 Check for Outliers in Numerical Column",
+    "text": "3.4 Check for Outliers in Numerical Column\nThere are total of 10 numerical columns that we can use for our statistical analysis. In this section, we will do an individual column check to see whether there is outliers affecting the column of the dataset.\n\nboxplot.stats(ship$Speed_Over_Ground_knots)$out\n\nnumeric(0)\n\n\n\nboxplot.stats(ship$Engine_Power_kW)$out\n\nnumeric(0)\n\n\n\nboxplot.stats(ship$Distance_Traveled_nm)$out\n\nnumeric(0)\n\n\n\nboxplot.stats(ship$Draft_meters)$out\n\nnumeric(0)\n\n\n\nboxplot.stats(ship$Operational_Cost_USD)$out\n\nnumeric(0)\n\n\n\nboxplot.stats(ship$Cargo_Weight_tons)$out\n\nnumeric(0)\n\n\n\nboxplot.stats(ship$Revenue_per_Voyage_USD)$out\n\nnumeric(0)\n\n\n\nboxplot.stats(ship$Turnaround_Time_hours)$out\n\nnumeric(0)\n\n\n\nboxplot.stats(ship$Efficiency_nm_per_kWh)$out\n\nnumeric(0)\n\n\n\nboxplot.stats(ship$Weekly_Voyage_Count)$out\n\nnumeric(0)\n\n\nThe result from the codes above shows that there are no potential outliers affecting the dataset."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#derive-new-columns",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#derive-new-columns",
+    "title": "Take-home Exercise 1",
+    "section": "3.5 Derive New Columns",
+    "text": "3.5 Derive New Columns\nTo gain more insights on this analysis, let us derive a new column to find out the profit gained on each voyage of the ships. The code chunk below will use mutate() to derive the new column.\n\nship &lt;- ship %&gt;% \n  mutate(Profit_per_Voyage_USD = Revenue_per_Voyage_USD - Operational_Cost_USD)"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#profit-analysis",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#profit-analysis",
+    "title": "Take-home Exercise 1",
+    "section": "4.1 Profit Analysis",
+    "text": "4.1 Profit Analysis\nLet us plot a the distribution of profit earned per voyage using the histogram below.\n\nPlotCode\n\n\n\n\nScale for x is already present.\nAdding another scale for x, which will replace the existing scale.\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = ship, aes(x = Profit_per_Voyage_USD)) + \n  geom_histogram(bins = 50,\n                 color = \"black\",\n                 fill = \"grey\") + \n  coord_cartesian(xlim=c(-500000,1000000),\n                  ylim=c(0,80)) + \n  scale_x_continuous(\n    breaks = seq(-500000, 1000000, by = 100000),\n    labels = scales::comma\n  ) +\n  scale_x_continuous(NULL,               \n                     breaks = seq(-500000, 1000000, by = 250000)) +\n  theme_gray()"
   }
 ]

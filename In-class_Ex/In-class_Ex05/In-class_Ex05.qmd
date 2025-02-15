@@ -43,3 +43,8 @@ summary(car_resale)
 car_resale %>% 
   ExpData(type = 1)
 ```
+
+```{r}
+car_resale %>% 
+  ExpData(type = 2)
+```

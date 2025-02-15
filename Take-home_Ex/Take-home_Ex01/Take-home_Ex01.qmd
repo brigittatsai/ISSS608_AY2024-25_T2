@@ -68,7 +68,7 @@ For easier read, let us list down all the columns in the table below to analyse 
 
 ::: {.table .table-striped .table-hover .table-bordered}
 | Column Name             | Type           | Description                              |
-|---------------------|-------------------|---------------------------------|
+|---------------------|-------------------|--------------------------------|
 | Date                    | date           | timestamp of data entry                  |
 | Ship_Type               | categorical    | types of vessel                          |
 | Route_Type              | categorical    | types of route                           |
@@ -251,6 +251,8 @@ ship <- ship %>%
 
 # 4 Exploratory Data Analysis
 
+## 4.1 Variable Correlations
+
 ## 4.1 Profit Analysis
 
 Let us plot a the distribution of profit earned per voyage using the histogram below.
@@ -259,7 +261,7 @@ Let us plot a the distribution of profit earned per voyage using the histogram b
 ### Plot
 
 ```{r, echo=FALSE}
-ggplot(data = ship, aes(x = Profit_per_Voyage_USD)) + 
+p1 <- ggplot(data = ship, aes(x = Profit_per_Voyage_USD)) + 
   geom_histogram(bins = 50,
                  color = "black",
                  fill = "grey") + 
@@ -269,16 +271,23 @@ ggplot(data = ship, aes(x = Profit_per_Voyage_USD)) +
     breaks = seq(-500000, 1000000, by = 100000),
     labels = scales::comma
   ) +
-  scale_x_continuous(NULL,               
+  scale_x_continuous("Profit (USD)",               
                      breaks = seq(-500000, 1000000, by = 250000)) +
-  theme_gray()
+  labs(
+    title = "Profit Distribution of Ships per Voyage (USD)",
+    y = "Count"
+  ) + 
+  theme_minimal()
+
+ggplotly(p1)
 ```
-The histogram shows a normal distribution ranging from US$ -500,000 to US$ 1,000,000. The distribution of profit is symmetrical with the highest count at US$ 250,000. Normal distribution shows that it is uncommon to have a very high profit, and it is also uncommon to get extreme losses from ship journey. The x-axis shows there are presence of negative profit value, ranging from US$ 0 to US$ -500,000. Although the occurence is not as often, is is still a questionable event of why certain ships incur losses in the ship operations. The histogram roughly highlights financial variability in the ship and maritime industry. 
+
+The histogram shows a normal distribution ranging from USD -500,000 to USD 1,000,000. The distribution of profit is symmetrical with the highest count at USD 250,000. Normal distribution shows that it is uncommon to have a very high profit, and it is also uncommon to get extreme losses from ship journey. The x-axis shows there are presence of negative profit value, ranging from USD 0 to USD -500,000. Although the occurrence is not as often, is is still a questionable event of why certain ships incur losses in the ship operations. The histogram roughly highlights financial variability in the ship and maritime industry.
 
 ### Code
 
 ```{r, eval=FALSE}
-ggplot(data = ship, aes(x = Profit_per_Voyage_USD)) + 
+p1 <- ggplot(data = ship, aes(x = Profit_per_Voyage_USD)) + 
   geom_histogram(bins = 50,
                  color = "black",
                  fill = "grey") + 
@@ -288,11 +297,36 @@ ggplot(data = ship, aes(x = Profit_per_Voyage_USD)) +
     breaks = seq(-500000, 1000000, by = 100000),
     labels = scales::comma
   ) +
-  scale_x_continuous(NULL,               
+  scale_x_continuous("Profit (USD)",               
                      breaks = seq(-500000, 1000000, by = 250000)) +
-  theme_gray()
+  labs(
+    title = "Profit Distribution of Ships per Voyage (USD)",
+    y = "Count"
+  ) + 
+  theme_minimal()
+
+ggplotly(p1)
 ```
 :::
+
+```{r}
+ggplot(ship, 
+       aes(x = Turnaround_Time_hours, 
+           y = Route_Type)) +
+  geom_density_ridges(
+    scale = 3,
+    rel_min_height = 0.01,
+    bandwidth = 2,
+    fill = lighten("#7097BB", .3),
+    color = "white"
+  ) +
+  scale_x_continuous(
+    name = "",
+    expand = c(0, 0)
+    ) +
+  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +
+  theme_ridges()
+```
 
 ## 4.2 Analysing Cost of Ship Operations
 

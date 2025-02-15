@@ -213,9 +213,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation">3 Data Preparation</a>
   <ul class="collapse">
-  <li><a href="#select-variables" id="toc-select-variables" class="nav-link" data-scroll-target="#select-variables">3.1 Select Variables</a></li>
-  </ul></li>
+  <li><a href="#select-variables" id="toc-select-variables" class="nav-link" data-scroll-target="#select-variables">3.1 Select Variables</a>
+  <ul class="collapse">
   <li><a href="#ship-dataframe" id="toc-ship-dataframe" class="nav-link" data-scroll-target="#ship-dataframe">Ship Dataframe</a></li>
+  </ul></li>
   <li><a href="#remove-columns" id="toc-remove-columns" class="nav-link" data-scroll-target="#remove-columns">3.2 Remove Columns</a></li>
   <li><a href="#handling-missing-value" id="toc-handling-missing-value" class="nav-link" data-scroll-target="#handling-missing-value">3.3 Handling Missing Value</a>
   <ul class="collapse">
@@ -224,6 +225,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#check-for-outliers-in-numerical-column" id="toc-check-for-outliers-in-numerical-column" class="nav-link" data-scroll-target="#check-for-outliers-in-numerical-column">3.4 Check for Outliers in Numerical Column</a></li>
   <li><a href="#derive-new-columns" id="toc-derive-new-columns" class="nav-link" data-scroll-target="#derive-new-columns">3.5 Derive New Columns</a></li>
+  </ul></li>
   <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis">4 Exploratory Data Analysis</a>
   <ul class="collapse">
   <li><a href="#profit-analysis" id="toc-profit-analysis" class="nav-link" data-scroll-target="#profit-analysis">4.1 Profit Analysis</a></li>
@@ -348,16 +350,14 @@ date  (1): Date
 </div>
 </div>
 <p>For easier read, let us list down all the columns in the table below to analyse the data types and the description.</p>
-</section>
-</section>
-<section id="ship-dataframe" class="level1 tabset-pane">
-<h1>Ship Dataframe</h1>
+<section id="ship-dataframe" class="level3 tabset-pane">
+<h3 class="anchored" data-anchor-id="ship-dataframe">Ship Dataframe</h3>
 <div class="table table-striped table-hover table-bordered">
 <table class="caption-top table">
 <colgroup>
-<col style="width: 30%">
-<col style="width: 19%">
-<col style="width: 50%">
+<col style="width: 28%">
+<col style="width: 26%">
+<col style="width: 45%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -460,6 +460,7 @@ date  (1): Date
 </tbody>
 </table>
 </div>
+</section>
 </section>
 <section id="remove-columns" class="level2">
 <h2 class="anchored" data-anchor-id="remove-columns">3.2 Remove Columns</h2>
@@ -720,6 +721,7 @@ $ Weekly_Voyage_Count     &lt;dbl&gt; 6, 9, 1, 8, 7, 3, 6, 2, 9, 4, 3, 7, 7, 2, 
 <span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Profit_per_Voyage_USD =</span> Revenue_per_Voyage_USD <span class="sc">-</span> Operational_Cost_USD)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+</section>
 <section id="exploratory-data-analysis" class="level1">
 <h1>4 Exploratory Data Analysis</h1>
 <section id="profit-analysis" class="level2">
@@ -742,6 +744,7 @@ Adding another scale for x, which will replace the existing scale.</code></pre>
 </div>
 </div>
 </div>
+<p>The histogram shows a normal distribution ranging from USD -500,000 to USD 1,000,000. The distribution of profit is symmetrical with the highest count at USD 250,000. Normal distribution shows that it is uncommon to have a very high profit, and it is also uncommon to get extreme losses from ship journey. The x-axis shows there are presence of negative profit value, ranging from USD 0 to USD -500,000. Although the occurrence is not as often, is is still a questionable event of why certain ships incur losses in the ship operations. The histogram roughly highlights financial variability in the ship and maritime industry.</p>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
@@ -755,9 +758,13 @@ Adding another scale for x, which will replace the existing scale.</code></pre>
 <span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">500000</span>, <span class="dv">1000000</span>, <span class="at">by =</span> <span class="dv">100000</span>),</span>
 <span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> scales<span class="sc">::</span>comma</span>
 <span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="cn">NULL</span>,               </span>
+<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="st">"Profit (USD)"</span>,               </span>
 <span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a>                     <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">500000</span>, <span class="dv">1000000</span>, <span class="at">by =</span> <span class="dv">250000</span>)) <span class="sc">+</span></span>
-<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_gray</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Profit Distribution of Ships per Voyage (USD)"</span>,</span>
+<span id="cb66-15"><a href="#cb66-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Count"</span></span>
+<span id="cb66-16"><a href="#cb66-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb66-17"><a href="#cb66-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>

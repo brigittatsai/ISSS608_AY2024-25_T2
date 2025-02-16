@@ -16,6 +16,8 @@ execute:
 
 ## 1.1 The Background
 
+The maritime industry plays a crucial role in supporting the global trade ecosystem, which serves as the primary mode for goods transportation. As it supports the international trading market, it is very important to pay more attention to the operational efficiency of the maritime industry. The purpose of this paper is to present the findings from shipping voyage data.
+
 ## 1.2 The Data
 
 The following are the details of the data source for this analysis:
@@ -35,7 +37,7 @@ As the graphical editor of the media company, an article about ship performance 
 
 ## 2.1 Load and Install Packages
 
-For this analysis, **tidyverse** and **ggplot2** packages will be used.
+For this analysis, **tidyverse** and **ggplot2** family packages will be used.
 
 ```{r}
 pacman::p_load(tidyverse, ggrepel, patchwork, ggthemes, hrbrthemes, ggiraph,
@@ -69,7 +71,7 @@ For easier read, let us list down all the columns in the table below to analyse 
 
 ::: {.table .table-striped .table-hover .table-bordered}
 | Column Name             | Type           | Description                              |
-|---------------------|-------------------|--------------------------------|
+|-------------------------|----------------|------------------------------------------|
 | Date                    | date           | timestamp of data entry                  |
 | Ship_Type               | categorical    | types of vessel                          |
 | Route_Type              | categorical    | types of route                           |
@@ -103,10 +105,6 @@ The 3 columns will be removed using the code chunk below:
 
 ```{r}
 ship <- ship %>% select(-c("Date", "Seasonal_Impact_Score", "Average_Load_Percentage"))
-```
-
-```{r}
-ship
 ```
 
 ## 3.3 Handling Missing Value
@@ -456,9 +454,7 @@ v3
 
 ## 4.3 Ship Type and Route Type Analysis
 
-### 4.3.1 Cargo Weight of Each Ship Type
-
-### 4.3.2 Loss Incurred by Each Ship Type and Route Type
+### 4.3.1 Loss Incurred by Each Ship Type and Route Type
 
 In this section, we will further breakdown each ship type according to the route type and analyse the profit and loss incurred from each voyage.
 
@@ -504,32 +500,202 @@ ggplotly(v4)
 ```
 :::
 
+### 4.3.2 Operational Cost
+
+::: panel-tabset
+### Plot
+
+```{r, echo=FALSE}
+v5 <- ggplot(loss, 
+       aes(x = Ship_Type, 
+           y = Operational_Cost_USD)) +
+  stat_halfeye(adjust = 0.5,
+               justification = -0.2,
+               .width = 0,
+               point_colour = NA,
+               position = position_nudge(x = -0.2)) +
+  geom_boxplot(width = .20,
+               outlier.shape = NA) +
+  scale_y_continuous("Operational Cost (USD)",               
+                     breaks = seq(0, 500000, by = 100000),
+                     labels = scales::comma) +
+  labs(
+    title = "Operational Cost Distribution of Bulk Carrier by Engine Type (USD)"
+  ) + 
+  coord_flip() +
+  theme_minimal()
+
+v5
+```
+
+### Code
+
+```{r, eval=FALSE}
+v5 <- ggplot(loss, 
+       aes(x = Ship_Type, 
+           y = Operational_Cost_USD)) +
+  stat_halfeye(adjust = 0.5,
+               justification = -0.2,
+               .width = 0,
+               point_colour = NA,
+               position = position_nudge(x = -0.2)) +
+  geom_boxplot(width = .20,
+               outlier.shape = NA) +
+  scale_y_continuous("Operational Cost (USD)",               
+                     breaks = seq(0, 500000, by = 100000),
+                     labels = scales::comma) +
+  labs(
+    title = "Operational Cost Distribution of Bulk Carrier by Engine Type (USD)"
+  ) + 
+  coord_flip() +
+  theme_minimal()
+
+v5
+```
+:::
+
+### 4.3.3 Mean Weights of Goods in the Ship
+
+According to the previous figure, we have concluded that the high operational cost of container ship and bulk carrier could be due to the cargo weights, which results in more maintenance needs or machine requirements. Hence, we will plot a visual to see whether container ships and bulk carriers has significantly more weights.
+
+::: panel-tabset
+### Plot
+
+```{r, echo=FALSE}
+tooltip <- function(y, ymax, accuracy = .01) {
+  mean <- scales::number(y, accuracy = accuracy)
+  sem <- scales::number(ymax - y, accuracy = accuracy)
+  paste("Mean Weight:", mean, "+/-", sem)
+}
+
+v6 <- ggplot(data=loss, 
+                   aes(x = Ship_Type),
+) +
+  stat_summary(aes(y = Cargo_Weight_tons, 
+                   tooltip = after_stat(  
+                     tooltip(y, ymax))),  
+    fun.data = "mean_se", 
+    geom = GeomInteractiveCol,  
+    fill = "steelblue"
+  ) +
+  stat_summary(aes(y = Cargo_Weight_tons),
+    fun.data = mean_se,
+    geom = "errorbar", width = 0.2, size = 0.2
+  ) + 
+  labs(
+    title = "Mean Weights of Ship Types that Incurred Loss",
+    x = "Ship Type",
+    y = "Weight (tons)"
+  )
+
+girafe(ggobj = v6,
+       width_svg = 8,
+       height_svg = 8*0.618)
+```
+
+The plot above proves that container ship and bulk carrier don't have the highest weight. In fact, fish carrier has the highest mean weight as compared to the other ship types. This means that the cause of high operational cost of container ship and bulk carrier could be due to other possible reasons.
+
+### Code
+
+```{r, eval=FALSE}
+tooltip <- function(y, ymax, accuracy = .01) {
+  mean <- scales::number(y, accuracy = accuracy)
+  sem <- scales::number(ymax - y, accuracy = accuracy)
+  paste("Mean Weight:", mean, "+/-", sem)
+}
+
+v6 <- ggplot(data=loss, 
+                   aes(x = Ship_Type),
+) +
+  stat_summary(aes(y = Cargo_Weight_tons, 
+                   tooltip = after_stat(  
+                     tooltip(y, ymax))),  
+    fun.data = "mean_se", 
+    geom = GeomInteractiveCol,  
+    fill = "steelblue"
+  ) +
+  stat_summary(aes(y = Cargo_Weight_tons),
+    fun.data = mean_se,
+    geom = "errorbar", width = 0.2, size = 0.2
+  ) + 
+  labs(
+    title = "Mean Weights of Ship Types that Incurred Loss",
+    x = "Ship Type",
+    y = "Weight (tons)"
+  )
+
+girafe(ggobj = v6,
+       width_svg = 8,
+       height_svg = 8*0.618)
+```
+:::
+
+### 4.3.4 Median Speed of Each Ship Types
+
+::: panel-tabset
+### Plot
+
+```{r, echo=FALSE}
+#| fig-width: 12
+#| fig-height: 8
+v7 <- ggplot(loss, 
+       aes(x = Ship_Type, 
+           y = Speed_Over_Ground_knots)) +
+  geom_boxplot(width = .20,
+               outlier.shape = NA,
+               position = position_nudge(x = -0.2)) +
+  labs(
+    title = "Boxplot of Ship Speed by Ship Type",
+    x = "Ship Type",
+    y = "Speed"
+  )
+
+ggplotly(v7)
+```
+
+From this boxplot, we can see that container ship has the highest median of ship speed. The high operational cost of
+
+### Code
+
+```{r, eval=FALSE}
+#| fig-width: 12
+#| fig-height: 8
+v7 <- ggplot(loss, 
+       aes(x = Ship_Type, 
+           y = Speed_Over_Ground_knots)) +
+  geom_boxplot(width = .20,
+               outlier.shape = NA,
+               position = position_nudge(x = -0.2)) +
+  labs(
+    title = "Boxplot of Ship Speed by Ship Type",
+    x = "Ship Type",
+    y = "Speed"
+  )
+
+ggplotly(v7)
+```
+:::
+
 ```{r}
-v7 <- ggplot(data = ship, 
-            aes(x = Weather_Condition)) +
+v8 <- ggplot(data = loss, 
+            aes(x = Maintenance_Status)) +
   geom_bar_interactive(
     aes(tooltip = paste0("Count: ", after_stat(count))), 
     width = 0.7, 
     fill = "steelblue"
   ) +
-  facet_wrap(~ Route_Type, scales = "free") +
-  scale_y_continuous(limits = c(0, 200)) +
+  facet_wrap(~ Ship_Type, scales = "free") +
+  scale_y_continuous(limits = c(0, 50)) +
   theme_minimal() +
-  labs(x = "Weather Condition", 
+  labs(x = "Maintenance Status", 
        y = "Count", 
-       title = "Weather Condition Distribution by Ship Type") +
+       title = "Maintenance Status Distribution by Ship Type") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   coord_flip()
 
 girafe(
-  ggobj = v5,
+  ggobj = v8,
   width_svg = 6,
   height_svg = 6*0.618
 )
-```
-
-## 4.4 Route Type against Cost
-
-```{r}
-
 ```

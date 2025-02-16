@@ -40,7 +40,8 @@ For this analysis, **tidyverse** and **ggplot2** packages will be used.
 ```{r}
 pacman::p_load(tidyverse, ggrepel, patchwork, ggthemes, hrbrthemes, ggiraph,
                plotly, DT, readxl, gifski, gapminder, gganimate, ggdist, ggridges,
-               colorspace, ggstatsplot, crosstalk, FunnelPlotR, knitr, scales)
+               colorspace, ggstatsplot, crosstalk, FunnelPlotR, knitr, scales,
+               corrplot)
 ```
 
 ## 2.2 Import Data
@@ -251,9 +252,11 @@ ship <- ship %>%
 
 # 4 Exploratory Data Analysis
 
-## 4.1 Variable Correlations
-
 ## 4.1 Profit Analysis
+
+```{r}
+profit <- ship[ship$Profit_per_Voyage_USD >= 0, ]
+```
 
 Let us plot a the distribution of profit earned per voyage using the histogram below.
 
@@ -261,25 +264,22 @@ Let us plot a the distribution of profit earned per voyage using the histogram b
 ### Plot
 
 ```{r, echo=FALSE}
-p1 <- ggplot(data = ship, aes(x = Profit_per_Voyage_USD)) + 
+v1 <- ggplot(data = ship, aes(x = Profit_per_Voyage_USD)) + 
   geom_histogram(bins = 50,
                  color = "black",
                  fill = "grey") + 
   coord_cartesian(xlim=c(-500000,1000000),
                   ylim=c(0,80)) + 
-  scale_x_continuous(
-    breaks = seq(-500000, 1000000, by = 100000),
-    labels = scales::comma
-  ) +
   scale_x_continuous("Profit (USD)",               
-                     breaks = seq(-500000, 1000000, by = 250000)) +
+                     breaks = seq(-500000, 1000000, by = 250000),
+                     labels = scales::comma) +
   labs(
     title = "Profit Distribution of Ships per Voyage (USD)",
     y = "Count"
   ) + 
   theme_minimal()
 
-ggplotly(p1)
+ggplotly(v1)
 ```
 
 The histogram shows a normal distribution ranging from USD -500,000 to USD 1,000,000. The distribution of profit is symmetrical with the highest count at USD 250,000. Normal distribution shows that it is uncommon to have a very high profit, and it is also uncommon to get extreme losses from ship journey. The x-axis shows there are presence of negative profit value, ranging from USD 0 to USD -500,000. Although the occurrence is not as often, is is still a questionable event of why certain ships incur losses in the ship operations. The histogram roughly highlights financial variability in the ship and maritime industry.
@@ -287,97 +287,249 @@ The histogram shows a normal distribution ranging from USD -500,000 to USD 1,000
 ### Code
 
 ```{r, eval=FALSE}
-p1 <- ggplot(data = ship, aes(x = Profit_per_Voyage_USD)) + 
+v1 <- ggplot(data = ship, aes(x = Profit_per_Voyage_USD)) + 
   geom_histogram(bins = 50,
                  color = "black",
                  fill = "grey") + 
   coord_cartesian(xlim=c(-500000,1000000),
                   ylim=c(0,80)) + 
-  scale_x_continuous(
-    breaks = seq(-500000, 1000000, by = 100000),
-    labels = scales::comma
-  ) +
   scale_x_continuous("Profit (USD)",               
-                     breaks = seq(-500000, 1000000, by = 250000)) +
+                     breaks = seq(-500000, 1000000, by = 250000),
+                     labels = scales::comma) +
   labs(
     title = "Profit Distribution of Ships per Voyage (USD)",
     y = "Count"
   ) + 
   theme_minimal()
 
-ggplotly(p1)
+ggplotly(v1)
 ```
 :::
 
-```{r}
-ggplot(ship, 
-       aes(x = Turnaround_Time_hours, 
-           y = Route_Type)) +
-  geom_density_ridges(
-    scale = 3,
-    rel_min_height = 0.01,
-    bandwidth = 2,
-    fill = lighten("#7097BB", .3),
-    color = "white"
-  ) +
-  scale_x_continuous(
-    name = "",
-    expand = c(0, 0)
-    ) +
-  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +
-  theme_ridges()
-```
+## 4.2 Loss Analysis
 
-## 4.2 Analysing Cost of Ship Operations
+### 4.2.1 Loss Incurred by Ship Types
+
+After the distribution plot, we are interested to find out the reason of loss incurred in the maritime industry. Let us create a new dataframe to do further analysis on the losses.
+
+```{r}
+loss <- ship[ship$Profit_per_Voyage_USD < 0, ]
+```
 
 ::: panel-tabset
-## Operational Cost
+### Plot
 
-In the code chunk below, we will show the average operational cost according to the ship type. We will set the maximum limit of the y-axis to 300,000.
+```{r, echo=FALSE}
+tooltip <- function(y, ymax, accuracy = .01) {
+  mean <- scales::number(y, accuracy = accuracy)
+  sem <- scales::number(ymax - y, accuracy = accuracy)
+  paste("Mean Loss:", mean, "+/-", sem)
+}
 
-```{r}
-avg_cost <- ship %>%
-  group_by(Ship_Type) %>%
-  summarise(Average_Cost = mean(Operational_Cost_USD, na.rm = TRUE))
+v2 <- ggplot(data=loss, 
+                   aes(x = Ship_Type),
+) +
+  stat_summary(aes(y = Profit_per_Voyage_USD, 
+                   tooltip = after_stat(  
+                     tooltip(y, ymax))),  
+    fun.data = "mean_se", 
+    geom = GeomInteractiveCol,  
+    fill = "light blue"
+  ) +
+  stat_summary(aes(y = Profit_per_Voyage_USD),
+    fun.data = mean_se,
+    geom = "errorbar", width = 0.2, size = 0.2
+  ) + 
+  labs(
+    title = "Loss per Voyage by Ship Type",
+    x = "Ship Type",
+    y = "Profit/Loss per Voyage (USD)"
+  )
 
-ggplot(data = avg_cost, aes(x = Ship_Type, y = Average_Cost, fill = Ship_Type)) +
-  geom_bar(stat = "identity", fill = "steelblue") +
-  scale_y_continuous(labels = comma, limits = c(0, 300000), expand = c(0, 0)) +
-  labs(title = "Average Operational Cost by Ship Type", x = "Ship Type", y = "Average Cost") +
-  theme_light() + 
-  theme(aspect.ratio = 1)
+girafe(ggobj = v2,
+       width_svg = 8,
+       height_svg = 8*0.618)
 ```
 
-From the bar chart, you can roughly see that on average, container ship has the highest cost for operations. But there is not much difference highlighted between each ship type.
+The plot suggests that bulk carrier incurs the most losses as compared to other types of ship. Bulk carrier has a mean loss of **USD 181,054** with a margin of error of USD 10,185. Other ship types incur a mean loss ranging from USD 140,000 to 160,000. From this plot, we are curious on why bulk carriers incur such a big loss in operating their ship.
 
-## Details
+### Code
+
+```{r, eval=FALSE}
+tooltip <- function(y, ymax, accuracy = .01) {
+  mean <- scales::number(y, accuracy = accuracy)
+  sem <- scales::number(ymax - y, accuracy = accuracy)
+  paste("Mean Loss:", mean, "+/-", sem)
+}
+
+v2 <- ggplot(data=loss, 
+                   aes(x = Ship_Type),
+) +
+  stat_summary(aes(y = Profit_per_Voyage_USD, 
+                   tooltip = after_stat(  
+                     tooltip(y, ymax))),  
+    fun.data = "mean_se", 
+    geom = GeomInteractiveCol,  
+    fill = "light blue"
+  ) +
+  stat_summary(aes(y = Profit_per_Voyage_USD),
+    fun.data = mean_se,
+    geom = "errorbar", width = 0.2, size = 0.2
+  ) + 
+  labs(
+    title = "Loss per Voyage by Ship Type",
+    x = "Ship Type",
+    y = "Profit/Loss per Voyage (USD)"
+  )
+
+girafe(ggobj = v2,
+       width_svg = 8,
+       height_svg = 8*0.618)
+```
+:::
+
+### 4.2.2 Bulk Carrier Analysis
+
+From the previous plot, we want to further deep dive into bulk carrier ship to find out the reason of such a big loss in operating this ship. Hence, let us derive a new dataframe by filtering out only the bulk carriers data using the code below.
 
 ```{r}
-range(ship$Operational_Cost_USD)
+bc <- ship[ship$Ship_Type == "Bulk Carrier",]
 ```
 
-```{r}
-ggplot(ship,
-       aes(x = Ship_Type,
+::: panel-tabset
+### Plot
+
+```{r, echo=FALSE}
+#| fig-width: 12
+#| fig-height: 8
+v3 <- ggplot(bc, 
+       aes(x = Engine_Type, 
            y = Operational_Cost_USD)) +
-  geom_boxplot(width = .2,
-               outlier.colour = "red") +
-  stat_dots(side = "left",
-            justification = 1.2,
-            binwidth = 1000,
-            dotsize = 7) +
-  scale_y_continuous(labels = comma, limits = c(0, 500000), expand = c(0, 0))
+  stat_halfeye(adjust = 0.5,
+               justification = -0.2,
+               .width = 0,
+               point_colour = NA,
+               position = position_nudge(x = -0.2)) +
+  geom_boxplot(width = .20,
+               outlier.shape = NA) +
+  scale_y_continuous("Operational Cost (USD)",               
+                     breaks = seq(0, 500000, by = 100000),
+                     labels = scales::comma) +
+  labs(
+    title = "Operational Cost Distribution of Bulk Carrier by Engine Type (USD)"
+  ) + 
+  coord_flip() +
+  theme_minimal()
 
+v3
+```
+
+There are 3 types of engines that could be used to operate a bulk carrier, **Steam Turbine**, **Heavy Fuel Oil** and **Diesel**. The boxplot suggests that, on average, it requires more cost to use Heavy Fuel Oil. The half eye graph shows the distribution shape of the operational cost. Heavy Fuel Oil and Steam Turbine have higher peaks, while Diesel has lower density distribution. This means that the cost of using Diesel is more spread out as compared to other engine types.
+
+### Code
+
+```{r, echo=FALSE}
+#| fig-width: 12
+#| fig-height: 8
+v3 <- ggplot(bc, 
+       aes(x = Engine_Type, 
+           y = Operational_Cost_USD)) +
+  stat_halfeye(adjust = 0.5,
+               justification = -0.2,
+               .width = 0,
+               point_colour = NA,
+               position = position_nudge(x = -0.2)) +
+  geom_boxplot(width = .20,
+               outlier.shape = NA) +
+  scale_y_continuous("Operational Cost (USD)",               
+                     breaks = seq(0, 500000, by = 100000),
+                     labels = scales::comma) +
+  labs(
+    title = "Operational Cost Distribution of Bulk Carrier by Engine Type (USD)"
+  ) + 
+  coord_flip() +
+  theme_minimal()
+
+v3
+```
+:::
+
+## 4.3 Ship Type and Route Type Analysis
+
+### 4.3.1 Cargo Weight of Each Ship Type
+
+### 4.3.2 Loss Incurred by Each Ship Type and Route Type
+
+In this section, we will further breakdown each ship type according to the route type and analyse the profit and loss incurred from each voyage.
+
+::: panel-tabset
+### Plot
+
+```{r, echo=FALSE}
+v4 <- ggplot(data = loss, 
+            aes(x = Ship_Type, fill = Route_Type)) +
+  geom_bar(stat = "count", 
+           position = "dodge", 
+           width = 0.7) +
+  scale_y_continuous(limits = c(0, 50)) +
+  scale_fill_manual(values = c("steelblue", "slategray", "darkslategray", "lightsteelblue")) +
+  theme_minimal() +
+  labs(x = "Ship Type", 
+       y = "Count", 
+       title = "Ship Type Distribution by Route Type that Incurred Loss") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+ggplotly(v4)
+```
+
+This code visualizes the count of ship type by each route type that incurred losses during the ship operations. The chart suggests that container ship that uses long-haul route incurred the most losses as compared to other types of route. The second most loss incurred is bulk carrier that uses coastal route and also short-haul. Container ships and bulk carrier typically weighs significantly higher than other types of ship. Hence, the high operational cost that outweighs the revenue of the ship operations.
+
+### Code
+
+```{r, eval=FALSE}
+v4 <- ggplot(data = loss, 
+            aes(x = Ship_Type, fill = Route_Type)) +
+  geom_bar(stat = "count", 
+           position = "dodge", 
+           width = 0.7) +
+  scale_y_continuous(limits = c(0, 50)) +
+  scale_fill_manual(values = c("steelblue", "slategray", "darkslategray", "lightsteelblue")) +
+  theme_minimal() +
+  labs(x = "Ship Type", 
+       y = "Count", 
+       title = "Ship Type Distribution by Route Type that Incurred Loss") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+ggplotly(v4)
 ```
 :::
 
 ```{r}
-max(ship$Revenue_per_Voyage_USD)
+v7 <- ggplot(data = ship, 
+            aes(x = Weather_Condition)) +
+  geom_bar_interactive(
+    aes(tooltip = paste0("Count: ", after_stat(count))), 
+    width = 0.7, 
+    fill = "steelblue"
+  ) +
+  facet_wrap(~ Route_Type, scales = "free") +
+  scale_y_continuous(limits = c(0, 200)) +
+  theme_minimal() +
+  labs(x = "Weather Condition", 
+       y = "Count", 
+       title = "Weather Condition Distribution by Ship Type") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  coord_flip()
+
+girafe(
+  ggobj = v5,
+  width_svg = 6,
+  height_svg = 6*0.618
+)
 ```
 
+## 4.4 Route Type against Cost
+
 ```{r}
-ggplot(data = ship, aes(x = Operational_Cost_USD)) + 
-  geom_histogram(bins = 50,
-                 color = "black",
-                 fill = "grey")
+
 ```

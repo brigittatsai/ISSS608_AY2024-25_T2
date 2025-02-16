@@ -71,7 +71,7 @@ For easier read, let us list down all the columns in the table below to analyse 
 
 ::: {.table .table-striped .table-hover .table-bordered}
 | Column Name             | Type           | Description                              |
-|-------------------------|----------------|------------------------------------------|
+|---------------------|-------------------|--------------------------------|
 | Date                    | date           | timestamp of data entry                  |
 | Ship_Type               | categorical    | types of vessel                          |
 | Route_Type              | categorical    | types of route                           |
@@ -502,6 +502,8 @@ ggplotly(v4)
 
 ### 4.3.2 Operational Cost
 
+According to the previous plot, container ship has the most count of ship operations that incurred losses. Hence, we are interested to find out the operational cost distribution of each type of ships from all the data entry that has higher cost than revenue.
+
 ::: panel-tabset
 ### Plot
 
@@ -520,13 +522,15 @@ v5 <- ggplot(loss,
                      breaks = seq(0, 500000, by = 100000),
                      labels = scales::comma) +
   labs(
-    title = "Operational Cost Distribution of Bulk Carrier by Engine Type (USD)"
+    title = "Operational Cost Distribution of Ship Types That Incurs Loss"
   ) + 
   coord_flip() +
   theme_minimal()
 
 v5
 ```
+
+The half eye distribution shows that container ship graph is skewed to the left and has higher count for operational cost above the median point. While bulk carrier and fish carrier distribution is also heavily left-skewed, the median point is still lower than container ship's data.
 
 ### Code
 
@@ -632,6 +636,8 @@ girafe(ggobj = v6,
 
 ### 4.3.4 Median Speed of Each Ship Types
 
+Let us plot a boxplot to find out whether the speed of the ship affects the high operational cost in shipping industry.
+
 ::: panel-tabset
 ### Plot
 
@@ -653,7 +659,7 @@ v7 <- ggplot(loss,
 ggplotly(v7)
 ```
 
-From this boxplot, we can see that container ship has the highest median of ship speed. The high operational cost of
+From this boxplot, we can see that container ship has the highest median of ship speed. The high operational cost of container ship could potentially be caused by the machine or engine requirements to operate faster ships. This could also be caused by other required logistics that might be more complicated in container ship as compared to a fish carrier.
 
 ### Code
 
@@ -676,26 +682,64 @@ ggplotly(v7)
 ```
 :::
 
-```{r}
-v8 <- ggplot(data = loss, 
-            aes(x = Maintenance_Status)) +
-  geom_bar_interactive(
-    aes(tooltip = paste0("Count: ", after_stat(count))), 
-    width = 0.7, 
-    fill = "steelblue"
-  ) +
-  facet_wrap(~ Ship_Type, scales = "free") +
-  scale_y_continuous(limits = c(0, 50)) +
-  theme_minimal() +
-  labs(x = "Maintenance Status", 
-       y = "Count", 
-       title = "Maintenance Status Distribution by Ship Type") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  coord_flip()
+## 4.4 Maintenance Status of Ships That Incurs Losses
 
-girafe(
-  ggobj = v8,
-  width_svg = 6,
-  height_svg = 6*0.618
-)
+In this section, we will highlight ships with critical maintenance status. The purpose is to focus on ships with bad maintenance quality and pay attention to ship types that require more maintenance.
+
+Before we create the plot, let us calculate the percentage of ships with critical maintenance status using the code below.
+
+```{r}
+c8 <- ship %>%
+  group_by(Ship_Type) %>%
+  summarise(
+    Total = n(),
+    Critical_Count = sum(Maintenance_Status == "Critical"),
+    Critical_Percentage = (Critical_Count / Total) * 100
+  )
 ```
+
+After deriving a variable to calculate the percentage, now let us plot and compare the maintenance status of each ship type.
+
+::: panel-tabset
+### Plot
+
+```{r, echo=FALSE}
+v8 <- ggplot(c8, aes(x = Ship_Type,
+                             y = Critical_Percentage,
+                             fill = Ship_Type)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(round(Critical_Percentage, 1), "%")),
+            vjust = -0.5) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Percentage of Critical Maintenance Status by Ship Type",
+       x = "Ship Type",
+       y = "Percentage of Critical Status") +
+  theme_minimal()
+
+ggplotly(v8)
+```
+
+From the bar chart, container ship has the highest percentage of ships that is not well-maintained. A well-maintained ship can help reduce the repair cost and the frequency of repairs, minimize downtime to help ship operate efficiently and it will also help them attract more businesses to use the service. This data shows that we should pay more attention to maintenance to help a smoother operations in the maritime industry.
+
+### Code
+
+```{r, eval=FALSE}
+v8 <- ggplot(c8, aes(x = Ship_Type,
+                             y = Critical_Percentage,
+                             fill = Ship_Type)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(round(Critical_Percentage, 1), "%")),
+            vjust = -0.5) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Percentage of Critical Maintenance Status by Ship Type",
+       x = "Ship Type",
+       y = "Percentage of Critical Status") +
+  theme_minimal()
+
+ggplotly(v8)
+```
+:::
+
+# 5 Conclusion
+
+The analysis on shipping industry suggests that there are a lot of room for improvements in the maritime industry, such as keeping a good level of ship maintenance to reduce unnecessary costs that prevent them to gain profits from operating ships. Other than the level of maintenance, it is also beneficial to choose the most optimal route of the ships to optimize the engine usage. Shipping industry also needs to pay attention to the engine types used for the ships and to use the necessary engines that fit the needs and requirements to prevent additional cost that does not benefit the voyage. In conclusion, there are a lot of loss incurred and it might affect the businesses in the long run. Therefore, additional analysis on the problems and bottlenecks will help improve the business significantly and avoid unnecessary cost.

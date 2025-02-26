@@ -1,0 +1,254 @@
+---
+title: "Hands-on Exercise 7"
+author: "Brigitta Karen Tsai"
+date: "February 26, 2025"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+---
+
+# Visualising and Analysing Time-oriented Data
+
+# 1 Getting Started
+
+## 1.1 Install and Launch R Packages
+
+```{r}
+pacman::p_load(scales, viridis, lubridate, ggthemes, gridExtra, 
+               readxl, knitr, data.table, CGPfunctions, ggHoriPlot,
+               tidyverse)
+```
+
+## 1.2 Import Data
+
+```{r}
+attacks <- read_csv("data/eventlog.csv")
+```
+
+## 1.3 Analyse Dataframe
+
+Let us use **kable()** function to review the structure of the dataframe
+
+```{r}
+kable(head(attacks))
+```
+
+There are 3 columns, **timestamp, source_country** and **tz**
+
+1.  **timestamp** column stores datetime values in POSIXct format
+2.  **source_country** column stores the source of attack. It is based on ISO 3166-1 alpha-2 country code
+3.  **tz** column stores the time zone of the source IP address
+
+## 1.4 Data Preparation
+
+To prepare a time-series dataframe, let us derive new columns **wkday** and **hour** from the dataset.
+
+```{r}
+make_hr_wkday <- function(ts, sc, tz) {
+  real_times <- ymd_hms(ts, 
+                        tz = tz[1], 
+                        quiet = TRUE)
+  dt <- data.table(source_country = sc,
+                   wkday = weekdays(real_times),
+                   hour = hour(real_times))
+  return(dt)
+  }
+```
+
+Next, let's derive attacks tibble dataframe
+
+```{r}
+wkday_levels <- c('Saturday', 'Friday', 
+                  'Thursday', 'Wednesday', 
+                  'Tuesday', 'Monday', 
+                  'Sunday')
+
+attacks <- attacks %>%
+  group_by(tz) %>%
+  do(make_hr_wkday(.$timestamp, 
+                   .$source_country, 
+                   .$tz)) %>% 
+  ungroup() %>% 
+  mutate(wkday = factor(
+    wkday, levels = wkday_levels),
+    hour  = factor(
+      hour, levels = 0:23))
+```
+
+The code below will show the dataframe after processing
+
+```{r}
+kable(head(attacks))
+```
+
+# 2 Building Calendar Heatmap
+
+## 2.1 Single Calendar Heatmap
+
+Let us build a calendar heatmap using the code below
+
+```{r}
+grouped <- attacks %>% 
+  count(wkday, hour) %>% 
+  ungroup() %>%
+  na.omit()
+
+ggplot(grouped, 
+       aes(hour, 
+           wkday, 
+           fill = n)) + 
+geom_tile(color = "white", 
+          size = 0.1) + 
+theme_tufte(base_family = "Helvetica") + 
+coord_equal() +
+scale_fill_gradient(name = "# of attacks",
+                    low = "sky blue", 
+                    high = "dark blue") +
+labs(x = NULL, 
+     y = NULL, 
+     title = "Attacks by weekday and time of day") +
+theme(axis.ticks = element_blank(),
+      plot.title = element_text(hjust = 0.5),
+      legend.title = element_text(size = 8),
+      legend.text = element_text(size = 6) )
+```
+
+## 2.2 Multiple Calendar Heatmaps
+
+Build a calendar heatmap of top 4 countries with highest number of attacks
+
+### 2.2.1 Count the attacks
+
+```{r}
+attacks_by_country <- count(
+  attacks, source_country) %>%
+  mutate(percent = percent(n/sum(n))) %>%
+  arrange(desc(n))
+```
+
+### 2.2.2 Prepare the Top 4 Dataframe
+
+```{r}
+top4 <- attacks_by_country$source_country[1:4]
+top4_attacks <- attacks %>%
+  filter(source_country %in% top4) %>%
+  count(source_country, wkday, hour) %>%
+  ungroup() %>%
+  mutate(source_country = factor(
+    source_country, levels = top4)) %>%
+  na.omit()
+```
+
+### 2.2.3 Plot the Calendar Heatmaps
+
+```{r}
+ggplot(top4_attacks, 
+       aes(hour, 
+           wkday, 
+           fill = n)) + 
+  geom_tile(color = "white", 
+          size = 0.1) + 
+  theme_tufte(base_family = "Helvetica") + 
+  coord_equal() +
+  scale_fill_gradient(name = "# of attacks",
+                    low = "sky blue", 
+                    high = "dark blue") +
+  facet_wrap(~source_country, ncol = 2) +
+  labs(x = NULL, y = NULL, 
+     title = "Attacks on top 4 countries by weekday and time of day") +
+  theme(axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 7),
+        plot.title = element_text(hjust = 0.5),
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 6) )
+```
+
+# 3 Plotting Cycle Plot
+
+In this section, we will plot a cycle plot to show the time-series pattern and trend of visitor arrivals from Vietnam using ggplot2 functions
+
+## 3.1 Import Data
+
+```{r}
+air <- read_excel("data/arrivals_by_air.xlsx")
+```
+
+## 3.2 Derive Month and Year Column
+
+```{r}
+air$month <- factor(month(air$`Month-Year`), 
+                    levels=1:12, 
+                    labels=month.abb, 
+                    ordered=TRUE) 
+air$year <- year(ymd(air$`Month-Year`))
+```
+
+## 3.3 Extract Target Country
+
+Let us extract the country we are analysing, which is Vietnam
+
+```{r}
+Vietnam <- air %>% 
+  select(`Vietnam`, 
+         month, 
+         year) %>%
+  filter(year >= 2010)
+```
+
+## 3.4 Compute Year Average Arrivals by Month
+
+```{r}
+hline.data <- Vietnam %>% 
+  group_by(month) %>%
+  summarise(avgvalue = mean(`Vietnam`))
+```
+
+## 3.5 Plotting a Cycle Plot
+
+```{r}
+ggplot() + 
+  geom_line(data=Vietnam,
+            aes(x=year, 
+                y=`Vietnam`, 
+                group=month), 
+            colour="black") +
+  geom_hline(aes(yintercept=avgvalue), 
+             data=hline.data, 
+             linetype=6, 
+             colour="red", 
+             size=0.5) + 
+  facet_grid(~month) +
+  labs(axis.text.x = element_blank(),
+       title = "Visitor arrivals from Vietnam by air, Jan 2010-Dec 2019") +
+  xlab("") +
+  ylab("No. of Visitors") +
+  theme_tufte(base_family = "Helvetica") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) # rotate the xlabel for easier read
+```
+
+# 4 Plotting Slopegraph
+
+## 4.1 Import Data
+
+```{r}
+rice <- read_csv("data/rice.csv")
+```
+
+## 4.2 Plotting the Slopegraph
+
+Let us plot a slopegraph using the code below
+
+```{r}
+rice %>% 
+  mutate(Year = factor(Year)) %>%
+  filter(Year %in% c(1961, 1980)) %>%
+  newggslopegraph(Year, Yield, Country,
+                Title = "Rice Yield of Top 11 Asian Counties",
+                SubTitle = "1961-1980",
+                Caption = "Prepared by: Dr. Kam Tin Seong")
+```
+
+The functiom **factor()** is used to convert the value of Year from numeric to factor

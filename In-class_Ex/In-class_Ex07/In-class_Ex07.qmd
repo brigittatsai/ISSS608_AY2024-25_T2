@@ -1,0 +1,251 @@
+---
+title: "In-class Exercise 7"
+author: "Brigitta Karen Tsai"
+date: "March 1, 2025"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+---
+
+# 1 Getting Started
+
+## 1.1 Install and Load R Packages
+
+```{r}
+pacman::p_load(tidyverse, tsibble, feasts, fable, seasonal)
+```
+
+## 1.2 Import Data
+
+```{r}
+ts_data <- read_csv("data/visitor_arrivals_by_air.csv")
+```
+
+# 2 Time-Series Data Visualization
+
+Overwrite the Month-Year
+
+```{r}
+ts_data$`Month-Year` <- dmy(
+  ts_data$`Month-Year`
+)
+```
+
+```{r}
+ts_data_ts <- ts(ts_data)
+head(ts_data_ts)
+```
+
+```{r}
+ts_tsibble <- ts_data %>%
+  mutate(Month = yearmonth(`Month-Year`)) %>%
+  as_tsibble(index = `Month`)
+
+ts_tsibble
+```
+
+```{r}
+ts_longer <- ts_data %>%
+  pivot_longer(cols = c(2:34),
+               names_to = "Country",
+               values_to = "Arrivals")
+```
+
+```{r}
+ts_longer %>%
+  filter(Country == "Vietnam") %>%
+  ggplot(aes(x = `Month-Year`, 
+             y = Arrivals))+
+  geom_line(size = 0.5)
+```
+
+```{r, fig.height=10, fig.width=10}
+ggplot(data = ts_longer, 
+       aes(x = `Month-Year`, 
+           y = Arrivals,
+           color = Country))+
+  geom_line(size = 0.5) +
+  theme(legend.position = "bottom", 
+        legend.box.spacing = unit(0.5, "cm"))
+```
+
+```{r, fig.height=10, fig.width=7}
+ggplot(data = ts_longer, 
+       aes(x = `Month-Year`, 
+           y = Arrivals))+
+  geom_line(size = 0.5) +
+  facet_wrap(~ Country,
+             ncol = 3,
+             scales = "free_y") +
+  theme_bw()
+```
+
+```{r}
+tsibble_longer <- ts_tsibble %>%
+  pivot_longer(cols = c(2:34),
+               names_to = "Country",
+               values_to = "Arrivals")
+```
+
+```{r}
+tsibble_longer %>%
+  filter(Country == "Italy" |
+         Country == "Vietnam" |
+         Country == "United Kingdom" |
+         Country == "Germany") %>% 
+  gg_season(Arrivals)
+```
+
+```{r}
+tsibble_longer %>%
+  filter(Country == "Vietnam" |
+         Country == "Italy") %>% 
+  gg_subseries(Arrivals)
+```
+
+## 2.1 ACF Plot
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam") %>%
+  ACF(Arrivals) %>% 
+  autoplot()
+```
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam") %>%
+  PACF(Arrivals) %>% 
+  autoplot()
+```
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam" |
+         `Country` == "Italy" |
+         `Country` == "United Kingdom" |
+         `Country` == "China") %>%
+  ACF(Arrivals) %>%
+  autoplot()
+```
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam" |
+         `Country` == "Italy" |
+         `Country` == "United Kingdom" |
+         `Country` == "China") %>%
+  PACF(Arrivals) %>%
+  autoplot()
+```
+
+## 2.2 STL
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam") %>%
+  model(stl = STL(Arrivals)) %>%
+  components() %>%
+  autoplot()
+```
+
+## 2.3 Visualising Autocorrelation: feasts method
+
+```{r}
+vietnam_ts <- tsibble_longer %>%
+  filter(Country == "Vietnam") %>% 
+  mutate(Type = if_else(
+    `Month-Year` >= "2019-01-01", 
+    "Hold-out", "Training"))
+```
+
+```{r}
+vietnam_train <- vietnam_ts %>%
+  filter(`Month-Year` < "2019-01-01")
+```
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam") %>%
+  ACF(Arrivals) %>% 
+  autoplot()
+```
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "United Kingdom") %>%
+  ACF(Arrivals) %>% 
+  autoplot()
+```
+
+## 2.4 Differencing: fable methods
+
+### 2.4.1 Trend Differencing
+
+```{r}
+tsibble_longer %>%
+  filter(Country == "Vietnam") %>%
+  gg_tsdisplay(difference(
+    Arrivals,
+    lag = 1), 
+    plot_type='partial')
+```
+
+### 2.4.2 Seasonal Differencing
+
+```{r}
+tsibble_longer %>%
+  filter(Country == "Vietnam") %>%
+  gg_tsdisplay(difference(
+    Arrivals,
+    difference = 12), 
+    plot_type='partial')
+```
+
+## 2.5 Fitting ARIMA Models: fable methods
+
+```{r}
+fit_autoARIMA <- vietnam_train %>%
+  model(ARIMA(Arrivals))
+report(fit_autoARIMA)
+```
+
+## 2.6 Forecasting
+
+```{r}
+ASEAN <- tsibble_longer %>%
+  filter(Country == "Vietnam" |
+         Country == "Malaysia" |
+         Country == "Indonesia" |
+         Country == "Thailand" |
+         Country == "Philippines")
+```
+
+```{r}
+ASEAN_train <- ASEAN %>%
+  mutate(Type = if_else(
+    `Month-Year` >= "2019-01-01", 
+    "Hold-out", "Training")) %>%
+  filter(Type == "Training")
+```
+
+```{r}
+ASEAN_fit <- ASEAN_train %>%
+  model(
+    ets = ETS(Arrivals),
+    arima = ARIMA(Arrivals)
+  )
+```
+
+```{r}
+ASEAN_fc <- ASEAN_fit %>%
+  forecast(h = "12 months")
+```
+
+```{r}
+ASEAN_fc %>%
+  autoplot(ASEAN)
+```

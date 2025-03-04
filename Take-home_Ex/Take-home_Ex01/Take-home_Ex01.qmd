@@ -71,7 +71,7 @@ For easier read, let us list down all the columns in the table below to analyse 
 
 ::: {.table .table-striped .table-hover .table-bordered}
 | Column Name             | Type           | Description                              |
-|---------------------|-------------------|--------------------------------|
+|-------------------------|----------------|------------------------------------------|
 | Date                    | date           | timestamp of data entry                  |
 | Ship_Type               | categorical    | types of vessel                          |
 | Route_Type              | categorical    | types of route                           |

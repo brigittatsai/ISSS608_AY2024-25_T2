@@ -1,0 +1,365 @@
+---
+title: "Take-home Exercise 2"
+author: "Brigitta Karen Tsai"
+date: "March 3, 2025"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+---
+
+# Be Tradewise or Otherwise
+
+# 1 Overview
+
+## 1.1 The Background
+
+## 1.2 The Data
+
+For this analysis, the data will be taken from [SingStat](https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment/merchandise-trade/latest-data), the following are the list of data used:
+
+1.  **Merchandise Trade by Region and Selected Markets**
+    1.  Imports
+    2.  Domestic Exports
+    3.  Re-Exports
+
+## 1.3 The Task
+
+There are several tasks assigned for this paper:
+
+1.  Select 3 visualisations from [this page](https://www.singstat.gov.sg/modules/infographics/singapore-international-trade), comment the pros and cons and provide the sketches of the make-over
+2.  Cre
+
+# 2 Getting Started
+
+## 2.1 Install and Load R Packages
+
+```{r}
+pacman::p_load(tidyverse, tsibble, feasts, fable, seasonal, lubridate, data.table)
+```
+
+## 2.2 Import Data
+
+::: panel-tabset
+### Imports
+
+```{r}
+imports <- read_csv("data/imports.csv")
+```
+
+### Domestic Exports
+
+```{r}
+dom_exports <- read_csv("data/dom_exports.csv")
+```
+
+### Re-Exports
+
+```{r}
+re_exports <- read_csv("data/re_exports.csv")
+```
+:::
+
+## 2.3 Data Wrangling
+
+### 2.3.1 Processing Imports Data
+
+Let us have a quick glance of the dataframe using the code below.
+
+```{r}
+tibble(imports)
+```
+
+For more enhanced analysis, let us split the dataframe into 2, by continent and by country
+
+::: panel-tabset
+### Country Level
+
+```{r}
+imports_country <- imports[-c(1:9, 11, 12, 43, 85, 121, 136, 171:187), ]
+```
+
+```{r}
+colnames(imports_country) <- imports_country[1, ]
+imports_country <- imports_country[-1, ]
+```
+
+```{r}
+imports_country <- imports_country %>% 
+  pivot_longer(cols = -1, names_to = "Date", values_to = "Value") %>% 
+  pivot_wider(names_from = colnames(imports_country)[1], values_from = "Value")
+```
+
+```{r}
+imports_country$`Date` <- ym(
+  imports_country$`Date`
+)
+```
+
+```{r}
+imports_country <- imports_country %>%
+  mutate(
+    across(-Date, as.numeric)
+  )
+```
+
+```{r}
+imports_country <- imports_country %>% 
+  mutate(Year = year(Date))
+```
+
+```{r}
+imports_country <- imports_country %>% 
+  select(Year, everything(), -Date)
+```
+
+```{r, warning=FALSE}
+imports_country <- imports_country %>% 
+  group_by(Year) %>%
+  summarise(across(where(is.numeric), sum, na.rm = TRUE))
+```
+
+### Continent Level
+
+```{r}
+imports_continent <- imports[c(10, 12, 43, 85, 121, 136), ]
+```
+
+```{r}
+colnames(imports_continent) <- imports_continent[1, ]
+imports_continent <- imports_continent[-1, ]
+```
+
+```{r}
+imports_continent <- imports_continent %>% 
+  pivot_longer(cols = -1, names_to = "Date", values_to = "Value") %>% 
+  pivot_wider(names_from = colnames(imports_continent)[1], values_from = "Value")
+```
+
+```{r}
+imports_continent$`Date` <- ym(
+  imports_continent$`Date`
+)
+```
+
+```{r}
+imports_continent <- imports_continent %>%
+  mutate(
+    across(-Date, as.numeric)
+  )
+```
+
+```{r}
+imports_continent <- imports_continent %>% 
+  mutate(Year = year(Date))
+```
+
+```{r}
+imports_continent <- imports_continent %>% 
+  select(Year, everything(), -Date)
+```
+
+```{r}
+imports_continent <- imports_continent %>% 
+  group_by(Year) %>%
+  summarise(across(where(is.numeric), sum, na.rm = TRUE))
+```
+:::
+
+### 2.3.2 Processing Domestic Exports Data
+
+Let us apply the same steps to both domestic exports and re-exports dataframe
+
+::: panel-tabset
+### Country Level
+
+```{r}
+domexp_country <- dom_exports[-c(1:9, 11, 12, 43, 85, 121, 136, 171:187), ]
+```
+
+```{r}
+colnames(domexp_country) <- domexp_country[1, ]
+domexp_country <- domexp_country[-1, ]
+```
+
+```{r}
+domexp_country <- domexp_country %>% 
+  pivot_longer(cols = -1, names_to = "Date", values_to = "Value") %>% 
+  pivot_wider(names_from = colnames(domexp_country)[1], values_from = "Value")
+```
+
+```{r}
+domexp_country$`Date` <- ym(
+  domexp_country$`Date`
+)
+```
+
+```{r}
+domexp_country <- domexp_country %>%
+  mutate(
+    across(-Date, as.numeric)
+  )
+```
+
+```{r}
+domexp_country <- domexp_country %>% 
+  mutate(Year = year(Date))
+```
+
+```{r}
+domexp_country <- domexp_country %>% 
+  select(Year, everything(), -Date)
+```
+
+```{r, warning=FALSE}
+domexp_country <- domexp_country %>% 
+  group_by(Year) %>%
+  summarise(across(where(is.numeric), sum, na.rm = TRUE))
+```
+
+### Continent Level
+
+```{r}
+domexp_continent <- dom_exports[c(10, 12, 43, 85, 121, 136), ]
+```
+
+```{r}
+colnames(domexp_continent) <- domexp_continent[1, ]
+domexp_continent <- domexp_continent[-1, ]
+```
+
+```{r}
+domexp_continent <- domexp_continent %>% 
+  pivot_longer(cols = -1, names_to = "Date", values_to = "Value") %>% 
+  pivot_wider(names_from = colnames(domexp_continent)[1], values_from = "Value")
+```
+
+```{r}
+domexp_continent$`Date` <- ym(
+  domexp_continent$`Date`
+)
+```
+
+```{r}
+domexp_continent <- domexp_continent %>%
+  mutate(
+    across(-Date, as.numeric)
+  )
+```
+
+```{r}
+domexp_continent <- domexp_continent %>% 
+  mutate(Year = year(Date))
+```
+
+```{r}
+domexp_continent <- domexp_continent %>% 
+  select(Year, everything(), -Date)
+```
+
+```{r}
+domexp_continent <- domexp_continent %>% 
+  group_by(Year) %>%
+  summarise(across(where(is.numeric), sum, na.rm = TRUE))
+```
+:::
+
+### 2.3.3 Processing Re-Exports Data
+
+::: panel-tabset
+### Country Level
+
+```{r}
+reexp_country <- re_exports[-c(1:9, 11, 12, 43, 85, 121, 136, 171:187), ]
+```
+
+```{r}
+colnames(reexp_country) <- reexp_country[1, ]
+reexp_country <- reexp_country[-1, ]
+```
+
+```{r}
+reexp_country <- reexp_country %>% 
+  pivot_longer(cols = -1, names_to = "Date", values_to = "Value") %>% 
+  pivot_wider(names_from = colnames(reexp_country)[1], values_from = "Value")
+```
+
+```{r}
+reexp_country$`Date` <- ym(
+  reexp_country$`Date`
+)
+```
+
+```{r}
+reexp_country <- reexp_country %>%
+  mutate(
+    across(-Date, as.numeric)
+  )
+```
+
+```{r}
+reexp_country <- reexp_country %>% 
+  mutate(Year = year(Date))
+```
+
+```{r}
+reexp_country <- reexp_country %>% 
+  select(Year, everything(), -Date)
+```
+
+```{r, warning=FALSE}
+reexp_country <- reexp_country %>% 
+  group_by(Year) %>%
+  summarise(across(where(is.numeric), sum, na.rm = TRUE))
+```
+
+### Continent Level
+
+```{r}
+reexp_continent <- re_exports[c(10, 12, 43, 85, 121, 136), ]
+```
+
+```{r}
+colnames(reexp_continent) <- reexp_continent[1, ]
+reexp_continent <- reexp_continent[-1, ]
+```
+
+```{r}
+reexp_continent <- reexp_continent %>% 
+  pivot_longer(cols = -1, names_to = "Date", values_to = "Value") %>% 
+  pivot_wider(names_from = colnames(reexp_continent)[1], values_from = "Value")
+```
+
+```{r}
+reexp_continent$`Date` <- ym(
+  reexp_continent$`Date`
+)
+```
+
+```{r}
+reexp_continent <- reexp_continent %>%
+  mutate(
+    across(-Date, as.numeric)
+  )
+```
+
+```{r}
+reexp_continent <- reexp_continent %>% 
+  mutate(Year = year(Date))
+```
+
+```{r}
+reexp_continent <- reexp_continent %>% 
+  select(Year, everything(), -Date)
+```
+
+```{r}
+reexp_continent <- reexp_continent %>% 
+  group_by(Year) %>%
+  summarise(across(where(is.numeric), sum, na.rm = TRUE))
+```
+:::
+
+### 2.3.4 Combining Domestic Exports and Re-Exports Data

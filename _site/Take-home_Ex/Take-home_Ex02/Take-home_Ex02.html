@@ -234,6 +234,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#combining-domestic-exports-and-re-exports-data" id="toc-combining-domestic-exports-and-re-exports-data" class="nav-link" data-scroll-target="#combining-domestic-exports-and-re-exports-data">2.3.4 Combining Domestic Exports and Re-Exports Data</a></li>
   </ul></li>
   </ul></li>
+  <li><a href="#data-visualization" id="toc-data-visualization" class="nav-link" data-scroll-target="#data-visualization">3 Data Visualization</a>
+  <ul class="collapse">
+  <li><a href="#comments-on-visualizations" id="toc-comments-on-visualizations" class="nav-link" data-scroll-target="#comments-on-visualizations">3.1 Comments on Visualizations</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -266,7 +270,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">March 4, 2025</p>
+      <p class="date-modified">March 6, 2025</p>
     </div>
   </div>
     
@@ -311,7 +315,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="install-and-load-r-packages" class="level2">
 <h2 class="anchored" data-anchor-id="install-and-load-r-packages">2.1 Install and Load R Packages</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, tsibble, feasts, fable, seasonal, lubridate, data.table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, tsibble, feasts, fable, seasonal, lubridate,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>               data.table, dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="import-data" class="level2">
@@ -1446,9 +1451,36 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 </section>
 <section id="combining-domestic-exports-and-re-exports-data" class="level3">
 <h3 class="anchored" data-anchor-id="combining-domestic-exports-and-re-exports-data">2.3.4 Combining Domestic Exports and Re-Exports Data</h3>
-
-
+<p>Using the code chunk below, we will combine both domestic exports and re-exports data</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Country</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Continent</a></li></ul>
+<div class="tab-content">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>exports_country <span class="ot">&lt;-</span> domexp_country <span class="sc">+</span> reexp_country</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>exports_country<span class="sc">$</span>Year <span class="ot">&lt;-</span> domexp_country<span class="sc">$</span>Year</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>exports_country <span class="ot">&lt;-</span> exports_country <span class="sc">%&gt;%</span> <span class="fu">relocate</span>(Year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>exports_continent <span class="ot">&lt;-</span> domexp_continent <span class="sc">+</span> reexp_continent</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>exports_continent<span class="sc">$</span>Year <span class="ot">&lt;-</span> domexp_continent<span class="sc">$</span>Year</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>exports_continent <span class="ot">&lt;-</span> exports_continent <span class="sc">%&gt;%</span> <span class="fu">relocate</span>(Year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
 </section>
+</section>
+</section>
+<section id="data-visualization" class="level1">
+<h1>3 Data Visualization</h1>
+<section id="comments-on-visualizations" class="level2">
+<h2 class="anchored" data-anchor-id="comments-on-visualizations">3.1 Comments on Visualizations</h2>
+<p><img src="images/Screenshot 2025-03-04 154127.png" class="img-fluid"></p>
+
+
 </section>
 </section>
 

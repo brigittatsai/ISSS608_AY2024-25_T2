@@ -37,7 +37,8 @@ There are several tasks assigned for this paper:
 ## 2.1 Install and Load R Packages
 
 ```{r}
-pacman::p_load(tidyverse, tsibble, feasts, fable, seasonal, lubridate, data.table)
+pacman::p_load(tidyverse, tsibble, feasts, fable, seasonal, lubridate,
+               data.table, dplyr)
 ```
 
 ## 2.2 Import Data
@@ -363,3 +364,29 @@ reexp_continent <- reexp_continent %>%
 :::
 
 ### 2.3.4 Combining Domestic Exports and Re-Exports Data
+
+Using the code chunk below, we will combine both domestic exports and re-exports data
+
+::: panel-tabset
+### Country
+
+```{r}
+exports_country <- domexp_country + reexp_country
+exports_country$Year <- domexp_country$Year
+exports_country <- exports_country %>% relocate(Year)
+```
+
+### Continent
+
+```{r}
+exports_continent <- domexp_continent + reexp_continent
+exports_continent$Year <- domexp_continent$Year
+exports_continent <- exports_continent %>% relocate(Year)
+```
+:::
+
+# 3 Data Visualization
+
+## 3.1 Comments on Visualizations
+
+![](images/Screenshot 2025-03-04 154127.png)

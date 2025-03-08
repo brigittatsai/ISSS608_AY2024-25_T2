@@ -53,7 +53,6 @@ In this section, we will import 3 datasets, **Imports, Domestic Exports** and **
 
 ```{r}
 imports <- read_csv("data/imports.csv")
-head(imports,1)
 ```
 
 ### Domestic Exports

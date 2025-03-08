@@ -511,11 +511,14 @@ ggplot(trade_summary, aes(y = Year, x = Total / 1000, fill = Type)) +
   scale_x_continuous(limits = c(0, 1000),
                      labels = scales::label_number())
 ```
+
+What are the key improvements on this visual?
+
+1.  The colors are standardized for both imports and exports, it ensures a clear definition of imports value and exports value.
+2.  The charts are clustered and grouped in years, showing a significant gap between every year's data.
 :::
 
 ### 3.1.2 Merchandise Trade Performance With Major Trading Partners, 2024
-
-\+
 
 ::: panel-tabset
 ### Original
@@ -622,4 +625,10 @@ ggplot(trade, aes(x = Exports, y = Imports)) +
         legend.position = "none"
     )
 ```
+
+How is this visual different from the original visualisation?
+
+1.  Instead of representing each country with different colors, each dot color represents whether the exports or imports value dominates the overall trade value, where green represents exports and blue represents imports
+2.  The opacity level shows how big the amount of exports or imports with each trading partners.
+3.  The x-label and y-label is re-positioned to avoid misinterpretation of axis values.
 :::

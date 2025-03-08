@@ -232,11 +232,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#processing-domestic-exports-data" id="toc-processing-domestic-exports-data" class="nav-link" data-scroll-target="#processing-domestic-exports-data">2.3.2 Processing Domestic Exports Data</a></li>
   <li><a href="#processing-re-exports-data" id="toc-processing-re-exports-data" class="nav-link" data-scroll-target="#processing-re-exports-data">2.3.3 Processing Re-Exports Data</a></li>
   <li><a href="#combining-domestic-exports-and-re-exports-data" id="toc-combining-domestic-exports-and-re-exports-data" class="nav-link" data-scroll-target="#combining-domestic-exports-and-re-exports-data">2.3.4 Combining Domestic Exports and Re-Exports Data</a></li>
+  <li><a href="#joining-import-and-export-data" id="toc-joining-import-and-export-data" class="nav-link" data-scroll-target="#joining-import-and-export-data">2.3.5 Joining Import and Export Data</a></li>
   </ul></li>
+  <li><a href="#save-data" id="toc-save-data" class="nav-link" data-scroll-target="#save-data">2.4 Save Data</a></li>
+  <li><a href="#load-final-data" id="toc-load-final-data" class="nav-link" data-scroll-target="#load-final-data">2.5 Load Final Data</a></li>
   </ul></li>
   <li><a href="#data-visualization" id="toc-data-visualization" class="nav-link" data-scroll-target="#data-visualization">3 Data Visualization</a>
   <ul class="collapse">
-  <li><a href="#comments-on-visualizations" id="toc-comments-on-visualizations" class="nav-link" data-scroll-target="#comments-on-visualizations">3.1 Comments on Visualizations</a></li>
+  <li><a href="#comments-on-visualizations" id="toc-comments-on-visualizations" class="nav-link" data-scroll-target="#comments-on-visualizations">3.1 Comments on Visualizations</a>
+  <ul class="collapse">
+  <li><a href="#total-merchandise-trade-at-current-price-2020-2024" id="toc-total-merchandise-trade-at-current-price-2020-2024" class="nav-link" data-scroll-target="#total-merchandise-trade-at-current-price-2020-2024">3.1.1 Total Merchandise Trade at Current Price, 2020-2024</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -270,7 +276,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">March 6, 2025</p>
+      <p class="date-modified">March 8, 2025</p>
     </div>
   </div>
     
@@ -306,7 +312,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>There are several tasks assigned for this paper:</p>
 <ol type="1">
 <li>Select 3 visualisations from <a href="https://www.singstat.gov.sg/modules/infographics/singapore-international-trade">this page</a>, comment the pros and cons and provide the sketches of the make-over</li>
-<li>Cre</li>
+<li>Create the makeover of the 3 data visualisation critic</li>
+<li>Analyse the data with time-series analysis by complimenting the analysis using appropriate visualisation methods</li>
 </ol>
 </section>
 </section>
@@ -1472,15 +1479,153 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 </div>
 </div>
 </section>
+<section id="joining-import-and-export-data" class="level3">
+<h3 class="anchored" data-anchor-id="joining-import-and-export-data">2.3.5 Joining Import and Export Data</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">Country Level</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Continent Level</a></li></ul>
+<div class="tab-content">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>exports_country <span class="ot">&lt;-</span> exports_country <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Type =</span> <span class="st">"Exports"</span>)</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>imports_country <span class="ot">&lt;-</span> imports_country <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Type =</span> <span class="st">"Imports"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>trade_country <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(exports_country, imports_country)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>trade_country <span class="ot">&lt;-</span> trade_country <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(Year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>trade_country <span class="ot">&lt;-</span> trade_country <span class="sc">%&gt;%</span> <span class="fu">select</span>(Year, Type, <span class="fu">everything</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>exports_continent <span class="ot">&lt;-</span> exports_continent <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Type =</span> <span class="st">"Exports"</span>)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>imports_continent <span class="ot">&lt;-</span> imports_continent <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Type =</span> <span class="st">"Imports"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>trade_continent <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(exports_continent, imports_continent)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>trade_continent <span class="ot">&lt;-</span> trade_continent <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(Year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>trade_continent <span class="ot">&lt;-</span> trade_continent <span class="sc">%&gt;%</span> <span class="fu">select</span>(Year, Type, <span class="fu">everything</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="save-data" class="level2">
+<h2 class="anchored" data-anchor-id="save-data">2.4 Save Data</h2>
+<p>For easier usage of cleaned dataframe, let us save it to csv file and load it to R environment</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(trade_country, <span class="st">"data/trade_country.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(trade_continent, <span class="st">"data/trade_continent.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="load-final-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-final-data">2.5 Load Final Data</h2>
+<p>Finally, use the code below to load the final dataframe to R environment</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>trade_country <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/trade_country.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 46 Columns: 160
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr   (1): Type
+dbl (159): Year, Antigua And Barbuda, Argentina, Bahamas, Bermuda, Brazil, C...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>trade_continent <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/trade_continent.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 46 Columns: 7
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (1): Type
+dbl (6): Year, America, Asia, Europe, Oceania, Africa
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
 </section>
 </section>
 <section id="data-visualization" class="level1">
 <h1>3 Data Visualization</h1>
+<p>To begin with the imports and exports analysis, we are going to refer to the SingStat website to look up 3 visualisations that we find interesting. However, to enhance the analysis, we will comment the pros and cons of each visual reference and create an improved version of the visuals.</p>
 <section id="comments-on-visualizations" class="level2">
 <h2 class="anchored" data-anchor-id="comments-on-visualizations">3.1 Comments on Visualizations</h2>
-<p><img src="images/Screenshot 2025-03-04 154127.png" class="img-fluid"></p>
+<p>Let us begin this section with the pros and cons of 3 visualisations.</p>
+<section id="total-merchandise-trade-at-current-price-2020-2024" class="level3">
+<h3 class="anchored" data-anchor-id="total-merchandise-trade-at-current-price-2020-2024">3.1.1 Total Merchandise Trade at Current Price, 2020-2024</h3>
+<p>Let us take a look at the first visualization for total merchandise trade in 2020-2024.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Original</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Visual Make-Over</a></li></ul>
+<div class="tab-content">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<p>The figure below is showing the total merchandise trade comparison for each year from 2020-2024. What could be improved from this data visualisation?</p>
+<p><img src="images/clipboard-471416878.png" class="img-fluid"></p>
+<p><strong>Pros:</strong></p>
+<ol type="1">
+<li>The visual design of the horizontal bar chart fits the theme of the data presented, which helps audience understand the context efficiently</li>
+<li>The data is sorted in descending order based on the year, showing the latest year data on top of the chart, which allows audience to view the most recent information first</li>
+</ol>
+<p><strong>Cons:</strong></p>
+<ol type="1">
+<li>The purpose of this chart is to compare the import and export of each year stated. However, the bar chart spacing does not indicate this comparison. To properly show the comparison, it should be visualized as clustered bar chart, where there is extra spacing for different years</li>
+<li>Although the choice of color palette is aesthetically nice, the color for all “imports” and all “exports” should be consistent and the legend should be shown in the chart. The current color does not highlight the difference between import and export as it is the same color with different opacity level</li>
+</ol>
+</div>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>trade_summary <span class="ot">&lt;-</span> trade_continent <span class="sc">%&gt;%</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Year <span class="sc">&gt;=</span> <span class="dv">2020</span> <span class="sc">&amp;</span> Year <span class="sc">&lt;=</span> <span class="dv">2024</span>) <span class="sc">%&gt;%</span>  </span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year, Type) <span class="sc">%&gt;%</span></span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Total =</span> <span class="fu">sum</span>(America, Asia, Europe, Oceania, Africa, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>trade_summary<span class="sc">$</span>Year <span class="ot">&lt;-</span> <span class="fu">factor</span>(trade_summary<span class="sc">$</span>Year, <span class="at">levels =</span> <span class="fu">sort</span>(<span class="fu">unique</span>(trade_summary<span class="sc">$</span>Year), <span class="at">decreasing =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(trade_summary, <span class="fu">aes</span>(<span class="at">y =</span> Year, <span class="at">x =</span> Total <span class="sc">/</span> <span class="dv">1000</span>, <span class="at">fill =</span> Type)) <span class="sc">+</span>  </span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.6</span>), <span class="at">width =</span> <span class="fl">0.5</span>) <span class="sc">+</span>  </span>
+<span id="cb73-10"><a href="#cb73-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Exports"</span> <span class="ot">=</span> <span class="st">"skyblue"</span>, <span class="st">"Imports"</span> <span class="ot">=</span> <span class="st">"lightcoral"</span>)) <span class="sc">+</span> </span>
+<span id="cb73-11"><a href="#cb73-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"OVERALL EXPORTS AND IMPORTS OF SERVICES, 2020-2024"</span>,</span>
+<span id="cb73-12"><a href="#cb73-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"S$ Billion"</span>, <span class="at">y =</span> <span class="st">"Year"</span>) <span class="sc">+</span></span>
+<span id="cb73-13"><a href="#cb73-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span>  </span>
+<span id="cb73-14"><a href="#cb73-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb73-15"><a href="#cb73-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>), </span>
+<span id="cb73-16"><a href="#cb73-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="fu">element_blank</span>(),  </span>
+<span id="cb73-17"><a href="#cb73-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb73-18"><a href="#cb73-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#E3ECF1"</span>, <span class="at">color =</span> <span class="cn">NA</span>)  <span class="co"># Light blue-gray background</span></span>
+<span id="cb73-19"><a href="#cb73-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb73-20"><a href="#cb73-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(Total <span class="sc">/</span> <span class="dv">1000</span>, <span class="dv">1</span>)), </span>
+<span id="cb73-21"><a href="#cb73-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.6</span>), <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.3</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb73-22"><a href="#cb73-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="at">data =</span> trade_summary <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Year) <span class="sc">%&gt;%</span></span>
+<span id="cb73-23"><a href="#cb73-23" aria-hidden="true" tabindex="-1"></a>               <span class="fu">summarise</span>(<span class="at">Total =</span> <span class="fu">sum</span>(Total) <span class="sc">/</span> <span class="dv">1000</span>, <span class="at">.groups =</span> <span class="st">"drop"</span>), </span>
+<span id="cb73-24"><a href="#cb73-24" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">y =</span> Year, <span class="at">x =</span> Total <span class="sc">+</span> <span class="dv">1</span>,  </span>
+<span id="cb73-25"><a href="#cb73-25" aria-hidden="true" tabindex="-1"></a>                 <span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">"Total: S$ "</span>, <span class="fu">round</span>(Total, <span class="dv">1</span>), <span class="st">"B"</span>)),</span>
+<span id="cb73-26"><a href="#cb73-26" aria-hidden="true" tabindex="-1"></a>             <span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">4</span>, </span>
+<span id="cb73-27"><a href="#cb73-27" aria-hidden="true" tabindex="-1"></a>             <span class="at">label.size =</span> <span class="fl">0.3</span>, <span class="at">label.r =</span> <span class="fu">unit</span>(<span class="dv">5</span>, <span class="st">"pt"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-67-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
 
+</section>
 </section>
 </section>
 

@@ -536,9 +536,13 @@ The figure below represents the total merchandise trade of the top 10 countries 
 
 ### Visual Make-Over
 
+Before the make-over, let us do some data wrangling to match the original visualisation's data structure. First, let us filter to 2024 data using the code below.
+
 ```{r}
 trade <- trade_country %>% filter(Year == 2024)
 ```
+
+As the original visual shows the **European Union**, let us group all the countries that are part of the European Union.
 
 ```{r}
 eu_countries <- c('Austria', 'Belgium', 'Bulgaria', 'Croatia', 'Cyprus',
@@ -551,6 +555,8 @@ eu_countries <- c('Austria', 'Belgium', 'Bulgaria', 'Croatia', 'Cyprus',
 trade$EU <- rowSums(trade[eu_countries])
 ```
 
+Now, let us pivot back the data and change the values from millions to billions using the code below.
+
 ```{r}
 trade <- trade %>%
   pivot_longer(cols = -c(Year, Type), names_to = "Country", values_to = "value") %>%
@@ -560,6 +566,8 @@ trade <- trade %>%
     Exports = Exports/1000
   )
 ```
+
+Let us define the color and the opacity of each country based on the imports or exports value. If exports value is higher, it will show green color, and blue if otherwise. The opacity represents how big the amount of the imports or exports in each country. The more solid the color, means the higher the trade value is.
 
 ```{r}
 trade <- trade %>%

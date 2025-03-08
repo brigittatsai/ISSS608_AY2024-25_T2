@@ -49,18 +49,21 @@ pacman::p_load(tidyverse, tsibble, feasts, fable, seasonal, lubridate,
 
 ```{r}
 imports <- read_csv("data/imports.csv")
+head(imports,1)
 ```
 
 ### Domestic Exports
 
 ```{r}
 dom_exports <- read_csv("data/dom_exports.csv")
+head(dom_exports,1)
 ```
 
 ### Re-Exports
 
 ```{r}
 re_exports <- read_csv("data/re_exports.csv")
+head(re_exports,1)
 ```
 :::
 
@@ -654,12 +657,14 @@ Now let us have a look at the final visualisation, showing the non-oil domestic 
 
 ### Visual Make-Over
 
-::: details Click to expand \### Data Wrangling
+::: {.callout-note collapse="true"}
+## Data Wrangling
 
 Before showing the visual make-over, it is necessary to do some data wrangling as it is from different data source, which is the **Merchandise Trade by Commodity Section** **(At Current Price), Monthly** dataset. Let us prepare the data using the code below.
 
 ```{r}
 nonoil <- read_csv("data/nonoil.csv")
+head(nonoil,1)
 ```
 
 ```{r}
@@ -697,6 +702,7 @@ nonoil <- nonoil %>%
 nonoil <- nonoil %>% 
   mutate(Total = round(Total/1000000, 1))
 ```
+:::
 
 ```{r, fig.width=9, fig.height=6}
 nonoil <- nonoil %>%

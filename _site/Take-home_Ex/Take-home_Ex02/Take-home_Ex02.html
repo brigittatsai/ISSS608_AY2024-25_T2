@@ -242,6 +242,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#comments-on-visualizations" id="toc-comments-on-visualizations" class="nav-link" data-scroll-target="#comments-on-visualizations">3.1 Comments on Visualizations</a>
   <ul class="collapse">
   <li><a href="#total-merchandise-trade-at-current-price-2020-2024" id="toc-total-merchandise-trade-at-current-price-2020-2024" class="nav-link" data-scroll-target="#total-merchandise-trade-at-current-price-2020-2024">3.1.1 Total Merchandise Trade at Current Price, 2020-2024</a></li>
+  <li><a href="#merchandise-trade-performance-with-major-trading-partners-2024" id="toc-merchandise-trade-performance-with-major-trading-partners-2024" class="nav-link" data-scroll-target="#merchandise-trade-performance-with-major-trading-partners-2024">3.1.2 Merchandise Trade Performance With Major Trading Partners, 2024</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -1295,7 +1296,7 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>domexp_country <span class="ot">&lt;-</span> dom_exports[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>, <span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">43</span>, <span class="dv">85</span>, <span class="dv">121</span>, <span class="dv">136</span>, <span class="dv">171</span><span class="sc">:</span><span class="dv">187</span>), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>domexp_country <span class="ot">&lt;-</span> dom_exports[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>, <span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">43</span>, <span class="dv">85</span>, <span class="dv">121</span>, <span class="dv">136</span>, <span class="dv">171</span><span class="sc">:</span><span class="dv">191</span>), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(domexp_country) <span class="ot">&lt;-</span> domexp_country[<span class="dv">1</span>, ]</span>
@@ -1379,7 +1380,7 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>reexp_country <span class="ot">&lt;-</span> re_exports[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>, <span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">43</span>, <span class="dv">85</span>, <span class="dv">121</span>, <span class="dv">136</span>, <span class="dv">171</span><span class="sc">:</span><span class="dv">187</span>), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>reexp_country <span class="ot">&lt;-</span> re_exports[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>, <span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">43</span>, <span class="dv">85</span>, <span class="dv">121</span>, <span class="dv">136</span>, <span class="dv">171</span><span class="sc">:</span><span class="dv">191</span>), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(reexp_country) <span class="ot">&lt;-</span> reexp_country[<span class="dv">1</span>, ]</span>
@@ -1532,11 +1533,11 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 <div class="cell">
 <div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>trade_country <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/trade_country.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Rows: 46 Columns: 160
+<pre><code>Rows: 46 Columns: 156
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
 chr   (1): Type
-dbl (159): Year, Antigua And Barbuda, Argentina, Bahamas, Bermuda, Brazil, C...
+dbl (155): Year, Antigua And Barbuda, Argentina, Bahamas, Bermuda, Brazil, C...
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
@@ -1602,20 +1603,143 @@ dbl (6): Year, America, Asia, Europe, Oceania, Africa
 <span id="cb73-15"><a href="#cb73-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>), </span>
 <span id="cb73-16"><a href="#cb73-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="fu">element_blank</span>(),  </span>
 <span id="cb73-17"><a href="#cb73-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
-<span id="cb73-18"><a href="#cb73-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#E3ECF1"</span>, <span class="at">color =</span> <span class="cn">NA</span>)  <span class="co"># Light blue-gray background</span></span>
+<span id="cb73-18"><a href="#cb73-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#E3ECF1"</span>, <span class="at">color =</span> <span class="cn">NA</span>)</span>
 <span id="cb73-19"><a href="#cb73-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb73-20"><a href="#cb73-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(Total <span class="sc">/</span> <span class="dv">1000</span>, <span class="dv">1</span>)), </span>
 <span id="cb73-21"><a href="#cb73-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.6</span>), <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.3</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
 <span id="cb73-22"><a href="#cb73-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="at">data =</span> trade_summary <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Year) <span class="sc">%&gt;%</span></span>
 <span id="cb73-23"><a href="#cb73-23" aria-hidden="true" tabindex="-1"></a>               <span class="fu">summarise</span>(<span class="at">Total =</span> <span class="fu">sum</span>(Total) <span class="sc">/</span> <span class="dv">1000</span>, <span class="at">.groups =</span> <span class="st">"drop"</span>), </span>
-<span id="cb73-24"><a href="#cb73-24" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">y =</span> Year, <span class="at">x =</span> Total <span class="sc">+</span> <span class="dv">1</span>,  </span>
+<span id="cb73-24"><a href="#cb73-24" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">y =</span> Year, <span class="at">x =</span> <span class="dv">900</span>,  </span>
 <span id="cb73-25"><a href="#cb73-25" aria-hidden="true" tabindex="-1"></a>                 <span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">"Total: S$ "</span>, <span class="fu">round</span>(Total, <span class="dv">1</span>), <span class="st">"B"</span>)),</span>
 <span id="cb73-26"><a href="#cb73-26" aria-hidden="true" tabindex="-1"></a>             <span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">4</span>, </span>
-<span id="cb73-27"><a href="#cb73-27" aria-hidden="true" tabindex="-1"></a>             <span class="at">label.size =</span> <span class="fl">0.3</span>, <span class="at">label.r =</span> <span class="fu">unit</span>(<span class="dv">5</span>, <span class="st">"pt"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb73-27"><a href="#cb73-27" aria-hidden="true" tabindex="-1"></a>             <span class="at">label.size =</span> <span class="fl">0.3</span>, <span class="at">label.r =</span> <span class="fu">unit</span>(<span class="dv">5</span>, <span class="st">"pt"</span>)) <span class="sc">+</span></span>
+<span id="cb73-28"><a href="#cb73-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1000</span>),</span>
+<span id="cb73-29"><a href="#cb73-29" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_number</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-67-1.png" class="img-fluid figure-img" width="1152"></p>
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-67-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="merchandise-trade-performance-with-major-trading-partners-2024" class="level3">
+<h3 class="anchored" data-anchor-id="merchandise-trade-performance-with-major-trading-partners-2024">3.1.2 Merchandise Trade Performance With Major Trading Partners, 2024</h3>
+<p>+</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Original</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Visual Make-Over</a></li></ul>
+<div class="tab-content">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
+<p>The figure below represents the total merchandise trade of the top 10 countries in 2024. Let us discuss the pros and cons of the visual shown below.</p>
+<p><img src="images/clipboard-2874159398.png" class="img-fluid"></p>
+<p><strong>Pros:</strong></p>
+<ol type="1">
+<li>The different bubble sizes that reflects the trade value with each country helps to highlight the countries with highest values more quickly.</li>
+<li>The x-axis and y-axis range is symmetrical, showing accurate representations. Moreover, as the chart is diagonally split, it highlights whether the country has more export or import values.</li>
+</ol>
+<p><strong>Cons:</strong></p>
+<ol type="1">
+<li>The placement of x-label and y-label is too close and can be misleading at first sight. For better visualisation, the label should be put at the other end of the line to avoid misinterpretations.</li>
+<li>The color representing each country does not give any significant insight. Instead,</li>
+</ol>
+</div>
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>trade <span class="ot">&lt;-</span> trade_country <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">==</span> <span class="dv">2024</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>eu_countries <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'Austria'</span>, <span class="st">'Belgium'</span>, <span class="st">'Bulgaria'</span>, <span class="st">'Croatia'</span>, <span class="st">'Cyprus'</span>,</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>                  <span class="st">'Czech Rep'</span>, <span class="st">'Denmark'</span>, <span class="st">'Estonia'</span>, <span class="st">'Finland'</span>, <span class="st">'France'</span>,</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>                  <span class="st">'Germany'</span>, <span class="st">'Greece'</span>, <span class="st">'Hungary'</span>, <span class="st">'Ireland'</span>, <span class="st">'Italy'</span>, <span class="st">'Latvia'</span>,</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>                  <span class="st">'Lithuania'</span>, <span class="st">'Luxembourg'</span>, <span class="st">'Malta'</span>, <span class="st">'Netherlands'</span>, <span class="st">'Poland'</span>,</span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>                  <span class="st">'Portugal'</span>, <span class="st">'Romania'</span>, <span class="st">'Slovakia'</span>, <span class="st">'Slovenia'</span>, <span class="st">'Spain'</span>, </span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>                  <span class="st">'Svalbard And Jan Mayen Islands'</span>,<span class="st">'Sweden'</span>)</span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>trade<span class="sc">$</span>EU <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(trade[eu_countries])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>trade <span class="ot">&lt;-</span> trade <span class="sc">%&gt;%</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(Year, Type), <span class="at">names_to =</span> <span class="st">"Country"</span>, <span class="at">values_to =</span> <span class="st">"value"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Type, <span class="at">values_from =</span> value) <span class="sc">%&gt;%</span> </span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Imports =</span> Imports<span class="sc">/</span><span class="dv">1000</span>,</span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Exports =</span> Exports<span class="sc">/</span><span class="dv">1000</span></span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>trade <span class="ot">&lt;-</span> trade <span class="sc">%&gt;%</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_trade =</span> Imports <span class="sc">+</span> Exports,</span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="fu">ifelse</span>(Exports <span class="sc">&gt;</span> Imports, </span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">rgb</span>(<span class="dv">34</span><span class="sc">/</span><span class="dv">255</span>, <span class="dv">139</span><span class="sc">/</span><span class="dv">255</span>, <span class="dv">34</span><span class="sc">/</span><span class="dv">255</span>, <span class="at">alpha =</span> <span class="dv">1</span>),</span>
+<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">rgb</span>(<span class="dv">70</span><span class="sc">/</span><span class="dv">255</span>, <span class="dv">130</span><span class="sc">/</span><span class="dv">255</span>, <span class="dv">180</span><span class="sc">/</span><span class="dv">255</span>, <span class="at">alpha =</span> <span class="dv">1</span>)</span>
+<span id="cb77-7"><a href="#cb77-7" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb77-8"><a href="#cb77-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">opacity =</span> <span class="fu">ifelse</span>(Exports <span class="sc">&gt;</span> Imports, </span>
+<span id="cb77-9"><a href="#cb77-9" aria-hidden="true" tabindex="-1"></a>                 <span class="fl">0.5</span> <span class="sc">+</span> (<span class="fl">0.7</span> <span class="sc">*</span> Exports <span class="sc">/</span> <span class="fu">max</span>(Exports, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb77-10"><a href="#cb77-10" aria-hidden="true" tabindex="-1"></a>                 <span class="fl">0.5</span> <span class="sc">+</span> (<span class="fl">0.7</span> <span class="sc">*</span> Imports <span class="sc">/</span> <span class="fu">max</span>(Imports, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span>
+<span id="cb77-11"><a href="#cb77-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb77-12"><a href="#cb77-12" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>trade <span class="ot">&lt;-</span> trade <span class="sc">%&gt;%</span> </span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_trade)) <span class="sc">%&gt;%</span> </span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(trade, <span class="fu">aes</span>(<span class="at">x =</span> Exports, <span class="at">y =</span> Imports)) <span class="sc">+</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>(<span class="at">data =</span> <span class="fu">expand.grid</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="at">by =</span> <span class="fl">0.5</span>),  </span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">y =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="at">by =</span> <span class="fl">0.5</span>)), </span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>          <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">fill =</span> x <span class="sc">&gt;</span> y), <span class="at">width =</span> <span class="fl">0.5</span>, <span class="at">height =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"TRUE"</span> <span class="ot">=</span> <span class="fu">rgb</span>(<span class="dv">200</span><span class="sc">/</span><span class="dv">255</span>, <span class="dv">255</span><span class="sc">/</span><span class="dv">255</span>, <span class="dv">200</span><span class="sc">/</span><span class="dv">255</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>),</span>
+<span id="cb79-7"><a href="#cb79-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"FALSE"</span> <span class="ot">=</span> <span class="fu">rgb</span>(<span class="dv">173</span><span class="sc">/</span><span class="dv">255</span>, <span class="dv">216</span><span class="sc">/</span><span class="dv">255</span>, <span class="dv">230</span><span class="sc">/</span><span class="dv">255</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>)</span>
+<span id="cb79-8"><a href="#cb79-8" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">+</span></span>
+<span id="cb79-9"><a href="#cb79-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb79-10"><a href="#cb79-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> color, <span class="at">alpha =</span> opacity), <span class="at">shape =</span> <span class="dv">16</span>, <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb79-11"><a href="#cb79-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-12"><a href="#cb79-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste</span>(Country, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">round</span>(total_trade, <span class="dv">1</span>))), </span>
+<span id="cb79-13"><a href="#cb79-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">size =</span> <span class="dv">4</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb79-14"><a href="#cb79-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-15"><a href="#cb79-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="cn">NA</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb79-16"><a href="#cb79-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>), <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">10</span>), <span class="at">minor_breaks =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb79-17"><a href="#cb79-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>), <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">10</span>), <span class="at">minor_breaks =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb79-18"><a href="#cb79-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Exports (S$ Billion)"</span>, <span class="at">y =</span> <span class="st">"Imports (S$ Billion)"</span>,</span>
+<span id="cb79-19"><a href="#cb79-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">"Merchandise Trade Performance With Major Trading Partners (2024)"</span>) <span class="sc">+</span></span>
+<span id="cb79-20"><a href="#cb79-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_identity</span>() <span class="sc">+</span></span>
+<span id="cb79-21"><a href="#cb79-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_alpha_continuous</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb79-22"><a href="#cb79-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb79-23"><a href="#cb79-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb79-24"><a href="#cb79-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust=</span><span class="fl">0.5</span>),</span>
+<span id="cb79-25"><a href="#cb79-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"whitesmoke"</span>, <span class="at">size =</span> <span class="fl">0.4</span>),</span>
+<span id="cb79-26"><a href="#cb79-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb79-27"><a href="#cb79-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb79-28"><a href="#cb79-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb79-29"><a href="#cb79-29" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span></span>
+<span id="cb79-30"><a href="#cb79-30" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The `size` argument of `element_line()` is deprecated as of ggplot2 3.4.0.
+ℹ Please use the `linewidth` argument instead.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 800 rows containing missing values or values outside the scale range
+(`geom_tile()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 1 row containing missing values or values outside the scale range
+(`geom_segment()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-73-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>

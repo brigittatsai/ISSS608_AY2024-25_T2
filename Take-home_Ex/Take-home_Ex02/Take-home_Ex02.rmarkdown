@@ -10,6 +10,7 @@ execute:
   freeze: true
 ---
 
+
 # Be Tradewise or Otherwise
 
 # 1 Overview
@@ -37,31 +38,39 @@ There are several tasks assigned for this paper:
 
 ## 2.1 Install and Load R Packages
 
+
 ```{r}
 pacman::p_load(tidyverse, tsibble, feasts, fable, seasonal, lubridate,
                data.table, dplyr)
 ```
+
 
 ## 2.2 Import Data
 
 ::: panel-tabset
 ### Imports
 
+
 ```{r}
 imports <- read_csv("data/imports.csv")
 ```
 
+
 ### Domestic Exports
+
 
 ```{r}
 dom_exports <- read_csv("data/dom_exports.csv")
 ```
 
+
 ### Re-Exports
+
 
 ```{r}
 re_exports <- read_csv("data/re_exports.csv")
 ```
+
 :::
 
 ## 2.3 Data Wrangling
@@ -70,14 +79,17 @@ re_exports <- read_csv("data/re_exports.csv")
 
 Let us have a quick glance of the dataframe using the code below.
 
+
 ```{r}
 tibble(imports)
 ```
+
 
 For more enhanced analysis, let us split the dataframe into 2, by continent and by country
 
 ::: panel-tabset
 ### Country Level
+
 
 ```{r}
 imports_country <- imports[-c(1:9, 11, 12, 43, 85, 121, 136, 171:187), ]
@@ -123,7 +135,9 @@ imports_country <- imports_country %>%
   summarise(across(where(is.numeric), sum, na.rm = TRUE))
 ```
 
+
 ### Continent Level
+
 
 ```{r}
 imports_continent <- imports[c(10, 12, 43, 85, 121, 136), ]
@@ -168,6 +182,7 @@ imports_continent <- imports_continent %>%
   group_by(Year) %>%
   summarise(across(where(is.numeric), sum, na.rm = TRUE))
 ```
+
 :::
 
 ### 2.3.2 Processing Domestic Exports Data
@@ -176,6 +191,7 @@ Let us apply the same steps to both domestic exports and re-exports dataframe
 
 ::: panel-tabset
 ### Country Level
+
 
 ```{r}
 domexp_country <- dom_exports[-c(1:9, 11, 12, 43, 85, 121, 136, 171:191), ]
@@ -221,7 +237,9 @@ domexp_country <- domexp_country %>%
   summarise(across(where(is.numeric), sum, na.rm = TRUE))
 ```
 
+
 ### Continent Level
+
 
 ```{r}
 domexp_continent <- dom_exports[c(10, 12, 43, 85, 121, 136), ]
@@ -266,12 +284,14 @@ domexp_continent <- domexp_continent %>%
   group_by(Year) %>%
   summarise(across(where(is.numeric), sum, na.rm = TRUE))
 ```
+
 :::
 
 ### 2.3.3 Processing Re-Exports Data
 
 ::: panel-tabset
 ### Country Level
+
 
 ```{r}
 reexp_country <- re_exports[-c(1:9, 11, 12, 43, 85, 121, 136, 171:191), ]
@@ -317,7 +337,9 @@ reexp_country <- reexp_country %>%
   summarise(across(where(is.numeric), sum, na.rm = TRUE))
 ```
 
+
 ### Continent Level
+
 
 ```{r}
 reexp_continent <- re_exports[c(10, 12, 43, 85, 121, 136), ]
@@ -362,6 +384,7 @@ reexp_continent <- reexp_continent %>%
   group_by(Year) %>%
   summarise(across(where(is.numeric), sum, na.rm = TRUE))
 ```
+
 :::
 
 ### 2.3.4 Combining Domestic Exports and Re-Exports Data
@@ -371,25 +394,30 @@ Using the code chunk below, we will combine both domestic exports and re-exports
 ::: panel-tabset
 ### Country
 
+
 ```{r}
 exports_country <- domexp_country + reexp_country
 exports_country$Year <- domexp_country$Year
 exports_country <- exports_country %>% relocate(Year)
 ```
 
+
 ### Continent
+
 
 ```{r}
 exports_continent <- domexp_continent + reexp_continent
 exports_continent$Year <- domexp_continent$Year
 exports_continent <- exports_continent %>% relocate(Year)
 ```
+
 :::
 
 ### 2.3.5 Joining Import and Export Data
 
 ::: panel-tabset
 ### Country Level
+
 
 ```{r}
 exports_country <- exports_country %>% mutate(Type = "Exports")
@@ -408,7 +436,9 @@ trade_country <- trade_country %>% arrange(Year)
 trade_country <- trade_country %>% select(Year, Type, everything())
 ```
 
+
 ### Continent Level
+
 
 ```{r}
 exports_continent <- exports_continent %>% mutate(Type = "Exports")
@@ -426,20 +456,24 @@ trade_continent <- trade_continent %>% arrange(Year)
 ```{r}
 trade_continent <- trade_continent %>% select(Year, Type, everything())
 ```
+
 :::
 
 ## 2.4 Save Data
 
 For easier usage of cleaned dataframe, let us save it to csv file and load it to R environment
 
+
 ```{r}
 write.csv(trade_country, "data/trade_country.csv", row.names = FALSE)
 write.csv(trade_continent, "data/trade_continent.csv", row.names = FALSE)
 ```
 
+
 ## 2.5 Load Final Data
 
 Finally, use the code below to load the final dataframe to R environment
+
 
 ```{r}
 trade_country <- read_csv("data/trade_country.csv")
@@ -448,6 +482,7 @@ trade_country <- read_csv("data/trade_country.csv")
 ```{r}
 trade_continent <- read_csv("data/trade_continent.csv")
 ```
+
 
 # 3 Data Visualization
 
@@ -480,6 +515,7 @@ The figure below is showing the total merchandise trade comparison for each year
 
 ### Visual Make-Over
 
+
 ```{r, fig.width=8, fig.height=6}
 trade_summary <- trade_continent %>%
   filter(Year >= 2020 & Year <= 2024) %>%  
@@ -511,6 +547,7 @@ ggplot(trade_summary, aes(y = Year, x = Total / 1000, fill = Type)) +
   scale_x_continuous(limits = c(0, 1000),
                      labels = scales::label_number())
 ```
+
 :::
 
 ### 3.1.2 Merchandise Trade Performance With Major Trading Partners, 2024
@@ -535,6 +572,7 @@ The figure below represents the total merchandise trade of the top 10 countries 
 2.  The color representing each country does not give any significant insight. Instead,
 
 ### Visual Make-Over
+
 
 ```{r}
 trade <- trade_country %>% filter(Year == 2024)
@@ -614,4 +652,6 @@ ggplot(trade, aes(x = Exports, y = Imports)) +
         legend.position = "none"
     )
 ```
+
 :::
+

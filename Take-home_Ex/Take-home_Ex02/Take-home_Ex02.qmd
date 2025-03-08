@@ -632,3 +632,37 @@ How is this visual different from the original visualisation?
 2.  The opacity level shows how big the amount of exports or imports with each trading partners.
 3.  The x-label and y-label is re-positioned to avoid misinterpretation of axis values.
 :::
+
+### 3.1.3 Non-Oil Domestic Exports (2024)
+
+::: panel-tabset
+### Original
+
+Now let us have a look at the final visualisation, showing the non-oil domestic exports by major commodity sections in 2024. It shows the percentage of share of each non-oil goods trade category. Let us examine the pros and cons of the following visualisation.
+
+![](images/clipboard-3962379803.png)
+
+**Pros:**
+
+1.  The visual above shows a detailed insight of each non-oil goods, showing both trade values and the percentage of share clearly.
+2.  Each category is highlighted in different color palettes, highlighting different goods under non-oil category.
+
+**Cons:**
+
+1.  The data is stacked into one bar. Although it visually fits the concept of the data presented, the data only shows the data for year 2024, hence, it will be better if it is separated into different bars for better readability.
+2.  The values are not sorted and it is uses both left and right side of the bar chart. It is not very efficient for readers as it may take sometime to figure out the category of each bar stack. It also can be misleading as the value is in random order.
+
+### Visual Make-Over
+
+::: {details="Click to Expand"}
+Before showing the visual make-over, it is necessary to do some data wrangling as it is from different data source, which is the **Merchandise Trade by Commodity Section** **(At Current Price), Monthly** dataset. Let us prepare the data using the code below.
+
+```{r}
+nonoil <- read_csv("data/nonoil.csv")
+```
+:::
+
+```{r}
+nonoil <- nonoil[c(10, 57:65), ]
+```
+:::

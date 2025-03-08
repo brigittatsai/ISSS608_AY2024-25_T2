@@ -243,6 +243,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#total-merchandise-trade-at-current-price-2020-2024" id="toc-total-merchandise-trade-at-current-price-2020-2024" class="nav-link" data-scroll-target="#total-merchandise-trade-at-current-price-2020-2024">3.1.1 Total Merchandise Trade at Current Price, 2020-2024</a></li>
   <li><a href="#merchandise-trade-performance-with-major-trading-partners-2024" id="toc-merchandise-trade-performance-with-major-trading-partners-2024" class="nav-link" data-scroll-target="#merchandise-trade-performance-with-major-trading-partners-2024">3.1.2 Merchandise Trade Performance With Major Trading Partners, 2024</a></li>
+  <li><a href="#non-oil-domestic-exports-2024" id="toc-non-oil-domestic-exports-2024" class="nav-link" data-scroll-target="#non-oil-domestic-exports-2024">3.1.3 Non-Oil Domestic Exports (2024)</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -277,7 +278,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">March 8, 2025</p>
+      <p class="date-modified">March 9, 2025</p>
     </div>
   </div>
     
@@ -1623,13 +1624,17 @@ dbl (6): Year, America, Asia, Europe, Oceania, Africa
 </div>
 </div>
 </div>
+<p>What are the key improvements on this visual?</p>
+<ol type="1">
+<li>The colors are standardized for both imports and exports, it ensures a clear definition of imports value and exports value.</li>
+<li>The charts are clustered and grouped in years, showing a significant gap between every year’s data.</li>
+</ol>
 </div>
 </div>
 </div>
 </section>
 <section id="merchandise-trade-performance-with-major-trading-partners-2024" class="level3">
 <h3 class="anchored" data-anchor-id="merchandise-trade-performance-with-major-trading-partners-2024">3.1.2 Merchandise Trade Performance With Major Trading Partners, 2024</h3>
-<p>+</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Original</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Visual Make-Over</a></li></ul>
 <div class="tab-content">
@@ -1648,9 +1653,11 @@ dbl (6): Year, America, Asia, Europe, Oceania, Africa
 </ol>
 </div>
 <div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<p>Before the make-over, let us do some data wrangling to match the original visualisation’s data structure. First, let us filter to 2024 data using the code below.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>trade <span class="ot">&lt;-</span> trade_country <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">==</span> <span class="dv">2024</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>As the original visual shows the <strong>European Union</strong>, let us group all the countries that are part of the European Union.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>eu_countries <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'Austria'</span>, <span class="st">'Belgium'</span>, <span class="st">'Bulgaria'</span>, <span class="st">'Croatia'</span>, <span class="st">'Cyprus'</span>,</span>
 <span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>                  <span class="st">'Czech Rep'</span>, <span class="st">'Denmark'</span>, <span class="st">'Estonia'</span>, <span class="st">'Finland'</span>, <span class="st">'France'</span>,</span>
@@ -1661,6 +1668,7 @@ dbl (6): Year, America, Asia, Europe, Oceania, Africa
 <span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>trade<span class="sc">$</span>EU <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(trade[eu_countries])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Now, let us pivot back the data and change the values from millions to billions using the code below.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>trade <span class="ot">&lt;-</span> trade <span class="sc">%&gt;%</span></span>
 <span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(Year, Type), <span class="at">names_to =</span> <span class="st">"Country"</span>, <span class="at">values_to =</span> <span class="st">"value"</span>) <span class="sc">%&gt;%</span></span>
@@ -1670,6 +1678,7 @@ dbl (6): Year, America, Asia, Europe, Oceania, Africa
 <span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Exports =</span> Exports<span class="sc">/</span><span class="dv">1000</span></span>
 <span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Let us define the color and the opacity of each country based on the imports or exports value. If exports value is higher, it will show green color, and blue if otherwise. The opacity represents how big the amount of the imports or exports in each country. The more solid the color, means the higher the trade value is.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>trade <span class="ot">&lt;-</span> trade <span class="sc">%&gt;%</span></span>
 <span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
@@ -1741,6 +1750,785 @@ dbl (6): Year, America, Asia, Europe, Oceania, Africa
 <figure class="figure">
 <p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-73-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
+</div>
+</div>
+</div>
+<p>How is this visual different from the original visualisation?</p>
+<ol type="1">
+<li>Instead of representing each country with different colors, each dot color represents whether the exports or imports value dominates the overall trade value, where green represents exports and blue represents imports</li>
+<li>The opacity level shows how big the amount of exports or imports with each trading partners.</li>
+<li>The x-label and y-label is re-positioned to avoid misinterpretation of axis values.</li>
+</ol>
+</div>
+</div>
+</div>
+</section>
+<section id="non-oil-domestic-exports-2024" class="level3">
+<h3 class="anchored" data-anchor-id="non-oil-domestic-exports-2024">3.1.3 Non-Oil Domestic Exports (2024)</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">Original</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">Visual Make-Over</a></li></ul>
+<div class="tab-content">
+<div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
+<p>Now let us have a look at the final visualisation, showing the non-oil domestic exports by major commodity sections in 2024. It shows the percentage of share of each non-oil goods trade category. Let us examine the pros and cons of the following visualisation.</p>
+<p><img src="images/clipboard-3962379803.png" class="img-fluid"></p>
+<p><strong>Pros:</strong></p>
+<ol type="1">
+<li>The visual above shows a detailed insight of each non-oil goods, showing both trade values and the percentage of share clearly.</li>
+<li>Each category is highlighted in different color palettes, highlighting different goods under non-oil category.</li>
+</ol>
+<p><strong>Cons:</strong></p>
+<ol type="1">
+<li>The data is stacked into one bar. Although it visually fits the concept of the data presented, the data only shows the data for year 2024, hence, it will be better if it is separated into different bars for better readability.</li>
+<li>The values are not sorted and it is uses both left and right side of the bar chart. It is not very efficient for readers as it may take sometime to figure out the category of each bar stack. It also can be misleading as the value is in random order.</li>
+</ol>
+</div>
+<div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
+<div data-details="Click to Expand">
+<p>Before showing the visual make-over, it is necessary to do some data wrangling as it is from different data source, which is the <strong>Merchandise Trade by Commodity Section</strong> <strong>(At Current Price), Monthly</strong> dataset. Let us prepare the data using the code below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>nonoil <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/nonoil.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>New names:
+Rows: 105 Columns: 734
+── Column specification
+──────────────────────────────────────────────────────── Delimiter: "," chr
+(734): ...1, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...1...
+ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
+Specify the column types or set `show_col_types = FALSE` to quiet this message.
+• `` -&gt; `...1`
+• `` -&gt; `...2`
+• `` -&gt; `...3`
+• `` -&gt; `...4`
+• `` -&gt; `...5`
+• `` -&gt; `...6`
+• `` -&gt; `...7`
+• `` -&gt; `...8`
+• `` -&gt; `...9`
+• `` -&gt; `...10`
+• `` -&gt; `...11`
+• `` -&gt; `...12`
+• `` -&gt; `...13`
+• `` -&gt; `...14`
+• `` -&gt; `...15`
+• `` -&gt; `...16`
+• `` -&gt; `...17`
+• `` -&gt; `...18`
+• `` -&gt; `...19`
+• `` -&gt; `...20`
+• `` -&gt; `...21`
+• `` -&gt; `...22`
+• `` -&gt; `...23`
+• `` -&gt; `...24`
+• `` -&gt; `...25`
+• `` -&gt; `...26`
+• `` -&gt; `...27`
+• `` -&gt; `...28`
+• `` -&gt; `...29`
+• `` -&gt; `...30`
+• `` -&gt; `...31`
+• `` -&gt; `...32`
+• `` -&gt; `...33`
+• `` -&gt; `...34`
+• `` -&gt; `...35`
+• `` -&gt; `...36`
+• `` -&gt; `...37`
+• `` -&gt; `...38`
+• `` -&gt; `...39`
+• `` -&gt; `...40`
+• `` -&gt; `...41`
+• `` -&gt; `...42`
+• `` -&gt; `...43`
+• `` -&gt; `...44`
+• `` -&gt; `...45`
+• `` -&gt; `...46`
+• `` -&gt; `...47`
+• `` -&gt; `...48`
+• `` -&gt; `...49`
+• `` -&gt; `...50`
+• `` -&gt; `...51`
+• `` -&gt; `...52`
+• `` -&gt; `...53`
+• `` -&gt; `...54`
+• `` -&gt; `...55`
+• `` -&gt; `...56`
+• `` -&gt; `...57`
+• `` -&gt; `...58`
+• `` -&gt; `...59`
+• `` -&gt; `...60`
+• `` -&gt; `...61`
+• `` -&gt; `...62`
+• `` -&gt; `...63`
+• `` -&gt; `...64`
+• `` -&gt; `...65`
+• `` -&gt; `...66`
+• `` -&gt; `...67`
+• `` -&gt; `...68`
+• `` -&gt; `...69`
+• `` -&gt; `...70`
+• `` -&gt; `...71`
+• `` -&gt; `...72`
+• `` -&gt; `...73`
+• `` -&gt; `...74`
+• `` -&gt; `...75`
+• `` -&gt; `...76`
+• `` -&gt; `...77`
+• `` -&gt; `...78`
+• `` -&gt; `...79`
+• `` -&gt; `...80`
+• `` -&gt; `...81`
+• `` -&gt; `...82`
+• `` -&gt; `...83`
+• `` -&gt; `...84`
+• `` -&gt; `...85`
+• `` -&gt; `...86`
+• `` -&gt; `...87`
+• `` -&gt; `...88`
+• `` -&gt; `...89`
+• `` -&gt; `...90`
+• `` -&gt; `...91`
+• `` -&gt; `...92`
+• `` -&gt; `...93`
+• `` -&gt; `...94`
+• `` -&gt; `...95`
+• `` -&gt; `...96`
+• `` -&gt; `...97`
+• `` -&gt; `...98`
+• `` -&gt; `...99`
+• `` -&gt; `...100`
+• `` -&gt; `...101`
+• `` -&gt; `...102`
+• `` -&gt; `...103`
+• `` -&gt; `...104`
+• `` -&gt; `...105`
+• `` -&gt; `...106`
+• `` -&gt; `...107`
+• `` -&gt; `...108`
+• `` -&gt; `...109`
+• `` -&gt; `...110`
+• `` -&gt; `...111`
+• `` -&gt; `...112`
+• `` -&gt; `...113`
+• `` -&gt; `...114`
+• `` -&gt; `...115`
+• `` -&gt; `...116`
+• `` -&gt; `...117`
+• `` -&gt; `...118`
+• `` -&gt; `...119`
+• `` -&gt; `...120`
+• `` -&gt; `...121`
+• `` -&gt; `...122`
+• `` -&gt; `...123`
+• `` -&gt; `...124`
+• `` -&gt; `...125`
+• `` -&gt; `...126`
+• `` -&gt; `...127`
+• `` -&gt; `...128`
+• `` -&gt; `...129`
+• `` -&gt; `...130`
+• `` -&gt; `...131`
+• `` -&gt; `...132`
+• `` -&gt; `...133`
+• `` -&gt; `...134`
+• `` -&gt; `...135`
+• `` -&gt; `...136`
+• `` -&gt; `...137`
+• `` -&gt; `...138`
+• `` -&gt; `...139`
+• `` -&gt; `...140`
+• `` -&gt; `...141`
+• `` -&gt; `...142`
+• `` -&gt; `...143`
+• `` -&gt; `...144`
+• `` -&gt; `...145`
+• `` -&gt; `...146`
+• `` -&gt; `...147`
+• `` -&gt; `...148`
+• `` -&gt; `...149`
+• `` -&gt; `...150`
+• `` -&gt; `...151`
+• `` -&gt; `...152`
+• `` -&gt; `...153`
+• `` -&gt; `...154`
+• `` -&gt; `...155`
+• `` -&gt; `...156`
+• `` -&gt; `...157`
+• `` -&gt; `...158`
+• `` -&gt; `...159`
+• `` -&gt; `...160`
+• `` -&gt; `...161`
+• `` -&gt; `...162`
+• `` -&gt; `...163`
+• `` -&gt; `...164`
+• `` -&gt; `...165`
+• `` -&gt; `...166`
+• `` -&gt; `...167`
+• `` -&gt; `...168`
+• `` -&gt; `...169`
+• `` -&gt; `...170`
+• `` -&gt; `...171`
+• `` -&gt; `...172`
+• `` -&gt; `...173`
+• `` -&gt; `...174`
+• `` -&gt; `...175`
+• `` -&gt; `...176`
+• `` -&gt; `...177`
+• `` -&gt; `...178`
+• `` -&gt; `...179`
+• `` -&gt; `...180`
+• `` -&gt; `...181`
+• `` -&gt; `...182`
+• `` -&gt; `...183`
+• `` -&gt; `...184`
+• `` -&gt; `...185`
+• `` -&gt; `...186`
+• `` -&gt; `...187`
+• `` -&gt; `...188`
+• `` -&gt; `...189`
+• `` -&gt; `...190`
+• `` -&gt; `...191`
+• `` -&gt; `...192`
+• `` -&gt; `...193`
+• `` -&gt; `...194`
+• `` -&gt; `...195`
+• `` -&gt; `...196`
+• `` -&gt; `...197`
+• `` -&gt; `...198`
+• `` -&gt; `...199`
+• `` -&gt; `...200`
+• `` -&gt; `...201`
+• `` -&gt; `...202`
+• `` -&gt; `...203`
+• `` -&gt; `...204`
+• `` -&gt; `...205`
+• `` -&gt; `...206`
+• `` -&gt; `...207`
+• `` -&gt; `...208`
+• `` -&gt; `...209`
+• `` -&gt; `...210`
+• `` -&gt; `...211`
+• `` -&gt; `...212`
+• `` -&gt; `...213`
+• `` -&gt; `...214`
+• `` -&gt; `...215`
+• `` -&gt; `...216`
+• `` -&gt; `...217`
+• `` -&gt; `...218`
+• `` -&gt; `...219`
+• `` -&gt; `...220`
+• `` -&gt; `...221`
+• `` -&gt; `...222`
+• `` -&gt; `...223`
+• `` -&gt; `...224`
+• `` -&gt; `...225`
+• `` -&gt; `...226`
+• `` -&gt; `...227`
+• `` -&gt; `...228`
+• `` -&gt; `...229`
+• `` -&gt; `...230`
+• `` -&gt; `...231`
+• `` -&gt; `...232`
+• `` -&gt; `...233`
+• `` -&gt; `...234`
+• `` -&gt; `...235`
+• `` -&gt; `...236`
+• `` -&gt; `...237`
+• `` -&gt; `...238`
+• `` -&gt; `...239`
+• `` -&gt; `...240`
+• `` -&gt; `...241`
+• `` -&gt; `...242`
+• `` -&gt; `...243`
+• `` -&gt; `...244`
+• `` -&gt; `...245`
+• `` -&gt; `...246`
+• `` -&gt; `...247`
+• `` -&gt; `...248`
+• `` -&gt; `...249`
+• `` -&gt; `...250`
+• `` -&gt; `...251`
+• `` -&gt; `...252`
+• `` -&gt; `...253`
+• `` -&gt; `...254`
+• `` -&gt; `...255`
+• `` -&gt; `...256`
+• `` -&gt; `...257`
+• `` -&gt; `...258`
+• `` -&gt; `...259`
+• `` -&gt; `...260`
+• `` -&gt; `...261`
+• `` -&gt; `...262`
+• `` -&gt; `...263`
+• `` -&gt; `...264`
+• `` -&gt; `...265`
+• `` -&gt; `...266`
+• `` -&gt; `...267`
+• `` -&gt; `...268`
+• `` -&gt; `...269`
+• `` -&gt; `...270`
+• `` -&gt; `...271`
+• `` -&gt; `...272`
+• `` -&gt; `...273`
+• `` -&gt; `...274`
+• `` -&gt; `...275`
+• `` -&gt; `...276`
+• `` -&gt; `...277`
+• `` -&gt; `...278`
+• `` -&gt; `...279`
+• `` -&gt; `...280`
+• `` -&gt; `...281`
+• `` -&gt; `...282`
+• `` -&gt; `...283`
+• `` -&gt; `...284`
+• `` -&gt; `...285`
+• `` -&gt; `...286`
+• `` -&gt; `...287`
+• `` -&gt; `...288`
+• `` -&gt; `...289`
+• `` -&gt; `...290`
+• `` -&gt; `...291`
+• `` -&gt; `...292`
+• `` -&gt; `...293`
+• `` -&gt; `...294`
+• `` -&gt; `...295`
+• `` -&gt; `...296`
+• `` -&gt; `...297`
+• `` -&gt; `...298`
+• `` -&gt; `...299`
+• `` -&gt; `...300`
+• `` -&gt; `...301`
+• `` -&gt; `...302`
+• `` -&gt; `...303`
+• `` -&gt; `...304`
+• `` -&gt; `...305`
+• `` -&gt; `...306`
+• `` -&gt; `...307`
+• `` -&gt; `...308`
+• `` -&gt; `...309`
+• `` -&gt; `...310`
+• `` -&gt; `...311`
+• `` -&gt; `...312`
+• `` -&gt; `...313`
+• `` -&gt; `...314`
+• `` -&gt; `...315`
+• `` -&gt; `...316`
+• `` -&gt; `...317`
+• `` -&gt; `...318`
+• `` -&gt; `...319`
+• `` -&gt; `...320`
+• `` -&gt; `...321`
+• `` -&gt; `...322`
+• `` -&gt; `...323`
+• `` -&gt; `...324`
+• `` -&gt; `...325`
+• `` -&gt; `...326`
+• `` -&gt; `...327`
+• `` -&gt; `...328`
+• `` -&gt; `...329`
+• `` -&gt; `...330`
+• `` -&gt; `...331`
+• `` -&gt; `...332`
+• `` -&gt; `...333`
+• `` -&gt; `...334`
+• `` -&gt; `...335`
+• `` -&gt; `...336`
+• `` -&gt; `...337`
+• `` -&gt; `...338`
+• `` -&gt; `...339`
+• `` -&gt; `...340`
+• `` -&gt; `...341`
+• `` -&gt; `...342`
+• `` -&gt; `...343`
+• `` -&gt; `...344`
+• `` -&gt; `...345`
+• `` -&gt; `...346`
+• `` -&gt; `...347`
+• `` -&gt; `...348`
+• `` -&gt; `...349`
+• `` -&gt; `...350`
+• `` -&gt; `...351`
+• `` -&gt; `...352`
+• `` -&gt; `...353`
+• `` -&gt; `...354`
+• `` -&gt; `...355`
+• `` -&gt; `...356`
+• `` -&gt; `...357`
+• `` -&gt; `...358`
+• `` -&gt; `...359`
+• `` -&gt; `...360`
+• `` -&gt; `...361`
+• `` -&gt; `...362`
+• `` -&gt; `...363`
+• `` -&gt; `...364`
+• `` -&gt; `...365`
+• `` -&gt; `...366`
+• `` -&gt; `...367`
+• `` -&gt; `...368`
+• `` -&gt; `...369`
+• `` -&gt; `...370`
+• `` -&gt; `...371`
+• `` -&gt; `...372`
+• `` -&gt; `...373`
+• `` -&gt; `...374`
+• `` -&gt; `...375`
+• `` -&gt; `...376`
+• `` -&gt; `...377`
+• `` -&gt; `...378`
+• `` -&gt; `...379`
+• `` -&gt; `...380`
+• `` -&gt; `...381`
+• `` -&gt; `...382`
+• `` -&gt; `...383`
+• `` -&gt; `...384`
+• `` -&gt; `...385`
+• `` -&gt; `...386`
+• `` -&gt; `...387`
+• `` -&gt; `...388`
+• `` -&gt; `...389`
+• `` -&gt; `...390`
+• `` -&gt; `...391`
+• `` -&gt; `...392`
+• `` -&gt; `...393`
+• `` -&gt; `...394`
+• `` -&gt; `...395`
+• `` -&gt; `...396`
+• `` -&gt; `...397`
+• `` -&gt; `...398`
+• `` -&gt; `...399`
+• `` -&gt; `...400`
+• `` -&gt; `...401`
+• `` -&gt; `...402`
+• `` -&gt; `...403`
+• `` -&gt; `...404`
+• `` -&gt; `...405`
+• `` -&gt; `...406`
+• `` -&gt; `...407`
+• `` -&gt; `...408`
+• `` -&gt; `...409`
+• `` -&gt; `...410`
+• `` -&gt; `...411`
+• `` -&gt; `...412`
+• `` -&gt; `...413`
+• `` -&gt; `...414`
+• `` -&gt; `...415`
+• `` -&gt; `...416`
+• `` -&gt; `...417`
+• `` -&gt; `...418`
+• `` -&gt; `...419`
+• `` -&gt; `...420`
+• `` -&gt; `...421`
+• `` -&gt; `...422`
+• `` -&gt; `...423`
+• `` -&gt; `...424`
+• `` -&gt; `...425`
+• `` -&gt; `...426`
+• `` -&gt; `...427`
+• `` -&gt; `...428`
+• `` -&gt; `...429`
+• `` -&gt; `...430`
+• `` -&gt; `...431`
+• `` -&gt; `...432`
+• `` -&gt; `...433`
+• `` -&gt; `...434`
+• `` -&gt; `...435`
+• `` -&gt; `...436`
+• `` -&gt; `...437`
+• `` -&gt; `...438`
+• `` -&gt; `...439`
+• `` -&gt; `...440`
+• `` -&gt; `...441`
+• `` -&gt; `...442`
+• `` -&gt; `...443`
+• `` -&gt; `...444`
+• `` -&gt; `...445`
+• `` -&gt; `...446`
+• `` -&gt; `...447`
+• `` -&gt; `...448`
+• `` -&gt; `...449`
+• `` -&gt; `...450`
+• `` -&gt; `...451`
+• `` -&gt; `...452`
+• `` -&gt; `...453`
+• `` -&gt; `...454`
+• `` -&gt; `...455`
+• `` -&gt; `...456`
+• `` -&gt; `...457`
+• `` -&gt; `...458`
+• `` -&gt; `...459`
+• `` -&gt; `...460`
+• `` -&gt; `...461`
+• `` -&gt; `...462`
+• `` -&gt; `...463`
+• `` -&gt; `...464`
+• `` -&gt; `...465`
+• `` -&gt; `...466`
+• `` -&gt; `...467`
+• `` -&gt; `...468`
+• `` -&gt; `...469`
+• `` -&gt; `...470`
+• `` -&gt; `...471`
+• `` -&gt; `...472`
+• `` -&gt; `...473`
+• `` -&gt; `...474`
+• `` -&gt; `...475`
+• `` -&gt; `...476`
+• `` -&gt; `...477`
+• `` -&gt; `...478`
+• `` -&gt; `...479`
+• `` -&gt; `...480`
+• `` -&gt; `...481`
+• `` -&gt; `...482`
+• `` -&gt; `...483`
+• `` -&gt; `...484`
+• `` -&gt; `...485`
+• `` -&gt; `...486`
+• `` -&gt; `...487`
+• `` -&gt; `...488`
+• `` -&gt; `...489`
+• `` -&gt; `...490`
+• `` -&gt; `...491`
+• `` -&gt; `...492`
+• `` -&gt; `...493`
+• `` -&gt; `...494`
+• `` -&gt; `...495`
+• `` -&gt; `...496`
+• `` -&gt; `...497`
+• `` -&gt; `...498`
+• `` -&gt; `...499`
+• `` -&gt; `...500`
+• `` -&gt; `...501`
+• `` -&gt; `...502`
+• `` -&gt; `...503`
+• `` -&gt; `...504`
+• `` -&gt; `...505`
+• `` -&gt; `...506`
+• `` -&gt; `...507`
+• `` -&gt; `...508`
+• `` -&gt; `...509`
+• `` -&gt; `...510`
+• `` -&gt; `...511`
+• `` -&gt; `...512`
+• `` -&gt; `...513`
+• `` -&gt; `...514`
+• `` -&gt; `...515`
+• `` -&gt; `...516`
+• `` -&gt; `...517`
+• `` -&gt; `...518`
+• `` -&gt; `...519`
+• `` -&gt; `...520`
+• `` -&gt; `...521`
+• `` -&gt; `...522`
+• `` -&gt; `...523`
+• `` -&gt; `...524`
+• `` -&gt; `...525`
+• `` -&gt; `...526`
+• `` -&gt; `...527`
+• `` -&gt; `...528`
+• `` -&gt; `...529`
+• `` -&gt; `...530`
+• `` -&gt; `...531`
+• `` -&gt; `...532`
+• `` -&gt; `...533`
+• `` -&gt; `...534`
+• `` -&gt; `...535`
+• `` -&gt; `...536`
+• `` -&gt; `...537`
+• `` -&gt; `...538`
+• `` -&gt; `...539`
+• `` -&gt; `...540`
+• `` -&gt; `...541`
+• `` -&gt; `...542`
+• `` -&gt; `...543`
+• `` -&gt; `...544`
+• `` -&gt; `...545`
+• `` -&gt; `...546`
+• `` -&gt; `...547`
+• `` -&gt; `...548`
+• `` -&gt; `...549`
+• `` -&gt; `...550`
+• `` -&gt; `...551`
+• `` -&gt; `...552`
+• `` -&gt; `...553`
+• `` -&gt; `...554`
+• `` -&gt; `...555`
+• `` -&gt; `...556`
+• `` -&gt; `...557`
+• `` -&gt; `...558`
+• `` -&gt; `...559`
+• `` -&gt; `...560`
+• `` -&gt; `...561`
+• `` -&gt; `...562`
+• `` -&gt; `...563`
+• `` -&gt; `...564`
+• `` -&gt; `...565`
+• `` -&gt; `...566`
+• `` -&gt; `...567`
+• `` -&gt; `...568`
+• `` -&gt; `...569`
+• `` -&gt; `...570`
+• `` -&gt; `...571`
+• `` -&gt; `...572`
+• `` -&gt; `...573`
+• `` -&gt; `...574`
+• `` -&gt; `...575`
+• `` -&gt; `...576`
+• `` -&gt; `...577`
+• `` -&gt; `...578`
+• `` -&gt; `...579`
+• `` -&gt; `...580`
+• `` -&gt; `...581`
+• `` -&gt; `...582`
+• `` -&gt; `...583`
+• `` -&gt; `...584`
+• `` -&gt; `...585`
+• `` -&gt; `...586`
+• `` -&gt; `...587`
+• `` -&gt; `...588`
+• `` -&gt; `...589`
+• `` -&gt; `...590`
+• `` -&gt; `...591`
+• `` -&gt; `...592`
+• `` -&gt; `...593`
+• `` -&gt; `...594`
+• `` -&gt; `...595`
+• `` -&gt; `...596`
+• `` -&gt; `...597`
+• `` -&gt; `...598`
+• `` -&gt; `...599`
+• `` -&gt; `...600`
+• `` -&gt; `...601`
+• `` -&gt; `...602`
+• `` -&gt; `...603`
+• `` -&gt; `...604`
+• `` -&gt; `...605`
+• `` -&gt; `...606`
+• `` -&gt; `...607`
+• `` -&gt; `...608`
+• `` -&gt; `...609`
+• `` -&gt; `...610`
+• `` -&gt; `...611`
+• `` -&gt; `...612`
+• `` -&gt; `...613`
+• `` -&gt; `...614`
+• `` -&gt; `...615`
+• `` -&gt; `...616`
+• `` -&gt; `...617`
+• `` -&gt; `...618`
+• `` -&gt; `...619`
+• `` -&gt; `...620`
+• `` -&gt; `...621`
+• `` -&gt; `...622`
+• `` -&gt; `...623`
+• `` -&gt; `...624`
+• `` -&gt; `...625`
+• `` -&gt; `...626`
+• `` -&gt; `...627`
+• `` -&gt; `...628`
+• `` -&gt; `...629`
+• `` -&gt; `...630`
+• `` -&gt; `...631`
+• `` -&gt; `...632`
+• `` -&gt; `...633`
+• `` -&gt; `...634`
+• `` -&gt; `...635`
+• `` -&gt; `...636`
+• `` -&gt; `...637`
+• `` -&gt; `...638`
+• `` -&gt; `...639`
+• `` -&gt; `...640`
+• `` -&gt; `...641`
+• `` -&gt; `...642`
+• `` -&gt; `...643`
+• `` -&gt; `...644`
+• `` -&gt; `...645`
+• `` -&gt; `...646`
+• `` -&gt; `...647`
+• `` -&gt; `...648`
+• `` -&gt; `...649`
+• `` -&gt; `...650`
+• `` -&gt; `...651`
+• `` -&gt; `...652`
+• `` -&gt; `...653`
+• `` -&gt; `...654`
+• `` -&gt; `...655`
+• `` -&gt; `...656`
+• `` -&gt; `...657`
+• `` -&gt; `...658`
+• `` -&gt; `...659`
+• `` -&gt; `...660`
+• `` -&gt; `...661`
+• `` -&gt; `...662`
+• `` -&gt; `...663`
+• `` -&gt; `...664`
+• `` -&gt; `...665`
+• `` -&gt; `...666`
+• `` -&gt; `...667`
+• `` -&gt; `...668`
+• `` -&gt; `...669`
+• `` -&gt; `...670`
+• `` -&gt; `...671`
+• `` -&gt; `...672`
+• `` -&gt; `...673`
+• `` -&gt; `...674`
+• `` -&gt; `...675`
+• `` -&gt; `...676`
+• `` -&gt; `...677`
+• `` -&gt; `...678`
+• `` -&gt; `...679`
+• `` -&gt; `...680`
+• `` -&gt; `...681`
+• `` -&gt; `...682`
+• `` -&gt; `...683`
+• `` -&gt; `...684`
+• `` -&gt; `...685`
+• `` -&gt; `...686`
+• `` -&gt; `...687`
+• `` -&gt; `...688`
+• `` -&gt; `...689`
+• `` -&gt; `...690`
+• `` -&gt; `...691`
+• `` -&gt; `...692`
+• `` -&gt; `...693`
+• `` -&gt; `...694`
+• `` -&gt; `...695`
+• `` -&gt; `...696`
+• `` -&gt; `...697`
+• `` -&gt; `...698`
+• `` -&gt; `...699`
+• `` -&gt; `...700`
+• `` -&gt; `...701`
+• `` -&gt; `...702`
+• `` -&gt; `...703`
+• `` -&gt; `...704`
+• `` -&gt; `...705`
+• `` -&gt; `...706`
+• `` -&gt; `...707`
+• `` -&gt; `...708`
+• `` -&gt; `...709`
+• `` -&gt; `...710`
+• `` -&gt; `...711`
+• `` -&gt; `...712`
+• `` -&gt; `...713`
+• `` -&gt; `...714`
+• `` -&gt; `...715`
+• `` -&gt; `...716`
+• `` -&gt; `...717`
+• `` -&gt; `...718`
+• `` -&gt; `...719`
+• `` -&gt; `...720`
+• `` -&gt; `...721`
+• `` -&gt; `...722`
+• `` -&gt; `...723`
+• `` -&gt; `...724`
+• `` -&gt; `...725`
+• `` -&gt; `...726`
+• `` -&gt; `...727`
+• `` -&gt; `...728`
+• `` -&gt; `...729`
+• `` -&gt; `...730`
+• `` -&gt; `...731`
+• `` -&gt; `...732`
+• `` -&gt; `...733`
+• `` -&gt; `...734`</code></pre>
 </div>
 </div>
 </div>

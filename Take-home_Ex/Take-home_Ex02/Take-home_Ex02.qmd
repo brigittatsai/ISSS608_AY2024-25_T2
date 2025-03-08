@@ -16,6 +16,8 @@ execute:
 
 ## 1.1 The Background
 
+The purpose of this analysis is to visualize the trends and patterns of Singapore international trade. By using historical data, we will find out the meaning behind these data and derive meaningful insights.
+
 ## 1.2 The Data
 
 For this analysis, the data will be taken from [SingStat](https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment/merchandise-trade/latest-data), the following are the list of data used:
@@ -43,6 +45,8 @@ pacman::p_load(tidyverse, tsibble, feasts, fable, seasonal, lubridate,
 ```
 
 ## 2.2 Import Data
+
+In this section, we will import 3 datasets, **Imports, Domestic Exports** and **Re-Exports**.
 
 ::: panel-tabset
 ### Imports
@@ -82,14 +86,20 @@ For more enhanced analysis, let us split the dataframe into 2, by continent and 
 ::: panel-tabset
 ### Country Level
 
+The code below will remove unwanted rows and only take the necessary rows.
+
 ```{r}
 imports_country <- imports[-c(1:9, 11, 12, 43, 85, 121, 136, 171:187), ]
 ```
+
+After the row selection, make the first row as the column headers.
 
 ```{r}
 colnames(imports_country) <- imports_country[1, ]
 imports_country <- imports_country[-1, ]
 ```
+
+Pivot the dataframe using the code chunk below.
 
 ```{r}
 imports_country <- imports_country %>% 
@@ -97,11 +107,15 @@ imports_country <- imports_country %>%
   pivot_wider(names_from = colnames(imports_country)[1], values_from = "Value")
 ```
 
+Format the date column into yearmonth format using the code below.
+
 ```{r}
 imports_country$`Date` <- ym(
   imports_country$`Date`
 )
 ```
+
+As the trade values are numeric data, convert all columns except the date column into numeric data type.
 
 ```{r}
 imports_country <- imports_country %>%
@@ -110,21 +124,29 @@ imports_country <- imports_country %>%
   )
 ```
 
+Extract the year using the code below.
+
 ```{r}
 imports_country <- imports_country %>% 
   mutate(Year = year(Date))
 ```
+
+Reorder the columns to improve readability of the dataframe
 
 ```{r}
 imports_country <- imports_country %>% 
   select(Year, everything(), -Date)
 ```
 
+Next, group the dataset based on the year and sum the trade values for each country.
+
 ```{r, warning=FALSE}
 imports_country <- imports_country %>% 
   group_by(Year) %>%
   summarise(across(where(is.numeric), sum, na.rm = TRUE))
 ```
+
+As the format for all 3 dataframes are the same, the same steps will be applied to all dataframes, divided into 2 levels, continent level and country level.
 
 ### Continent Level
 
@@ -147,6 +169,26 @@ imports_continent <- imports_continent %>%
 imports_continent$`Date` <- ym(
   imports_continent$`Date`
 )
+```
+
+```{r}
+imports_continent <- imports_continent %>%
+  mutate(
+    across(-Date, as.numeric)
+  )
+```
+
+```{r}
+imports_month <- imports_continent %>% 
+  select(everything())
+```
+
+```{r}
+imports_month <- imports_continent %>% 
+  select(everything()) %>% 
+  mutate(
+    across(-Date, as.numeric)
+  )
 ```
 
 ```{r}
@@ -248,6 +290,14 @@ domexp_continent$`Date` <- ym(
 ```
 
 ```{r}
+domexp_month <- domexp_continent %>% 
+  select(everything()) %>% 
+  mutate(
+    across(-Date, as.numeric)
+  )
+```
+
+```{r}
 domexp_continent <- domexp_continent %>%
   mutate(
     across(-Date, as.numeric)
@@ -344,6 +394,19 @@ reexp_continent$`Date` <- ym(
 ```
 
 ```{r}
+reexp_month <- reexp_continent %>% 
+  select(everything())
+```
+
+```{r}
+reexp_month <- reexp_continent %>% 
+  select(everything()) %>% 
+  mutate(
+    across(-Date, as.numeric)
+  )
+```
+
+```{r}
 reexp_continent <- reexp_continent %>%
   mutate(
     across(-Date, as.numeric)
@@ -369,7 +432,7 @@ reexp_continent <- reexp_continent %>%
 
 ### 2.3.4 Combining Domestic Exports and Re-Exports Data
 
-Using the code chunk below, we will combine both domestic exports and re-exports data
+Using the code chunk below, we will combine both domestic exports and re-exports data.
 
 ::: panel-tabset
 ### Country
@@ -387,9 +450,16 @@ exports_continent <- domexp_continent + reexp_continent
 exports_continent$Year <- domexp_continent$Year
 exports_continent <- exports_continent %>% relocate(Year)
 ```
+
+```{r}
+exports_month <- domexp_month
+exports_month[, c(2:6)] <- domexp_month[, c(2:6)] + reexp_month[, c(2:6)]
+```
 :::
 
 ### 2.3.5 Joining Import and Export Data
+
+In this section, we will expand the dataset and combine both imports and exports as the summary of merchandise trade.
 
 ::: panel-tabset
 ### Country Level
@@ -428,6 +498,19 @@ trade_continent <- trade_continent %>% arrange(Year)
 
 ```{r}
 trade_continent <- trade_continent %>% select(Year, Type, everything())
+```
+
+```{r}
+trade_continent[,-c(1,2)] <- trade_continent[,-c(1,2)] / 1000
+```
+
+```{r}
+exports_month <- exports_month %>% mutate(Type = "Exports")
+imports_month <- imports_month %>% mutate(Type = "Imports")
+```
+
+```{r}
+trade_month <- bind_rows(exports_month, imports_month)
 ```
 :::
 
@@ -731,3 +814,102 @@ What are the key improvements of the make-over visualisation?
 1.  Each category is separated to different bar charts and no longer stacked, showing the value of each category efficiently and improves the readability.
 2.  The data is sorted from highest value to lowest value, highlighting the top non-oil category with highest trade value. Each category also shows the percentage, representing the share of each non-oil goods.
 :::
+
+## 3.2 Time-Series Analysis
+
+### 3.2.1 Yearly Trade in Asia vs America
+
+```{r}
+trade_asia <- trade_continent %>%
+  filter(between(Year, 2015, 2024)) %>% 
+  select(Year, Type, Asia)
+
+ggplot(trade_asia, aes(x = Year, y = Asia, color = Type, group = Type)) +
+  geom_line(size = 1) +
+  geom_point(size = 3) +
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 10)) +
+  labs(title = "Yearly Exports vs Imports in Asia",
+       x = "Year",
+       y = "Trade Value (S$ Billion)",
+       color = "Trade Type") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    legend.position = "bottom",
+    legend.justification = "center"
+  )
+```
+
+From the figure above, we can see that in Asia, the exports value is always higher than the imports. The chart shows significant drop of value from when entering the year 2023. The pattern roughly shows there is a drop of trade value every 2-3 years.
+
+```{r}
+trade_us <- trade_continent %>%
+  filter(between(Year, 2015, 2024)) %>% 
+  select(Year, Type, America)
+
+ggplot(trade_us, aes(x = Year, y = America, color = Type, group = Type)) +
+  geom_line(size = 1) +
+  geom_point(size = 3) +
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 10)) +
+  labs(title = "Yearly Exports vs Imports in America",
+       x = "Year",
+       y = "Trade Value (S$ Billion)",
+       color = "Trade Type") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    legend.position = "bottom",
+    legend.justification = "center"
+  )
+```
+
+However, it seems to be quite a different story for America side. The imports value is generally higher than exports, while the exports value has only been higher in the year 2020. This shows that Singapore did more imports than exports with America. The imports value spikes quite quickly from the year 2020 to 2022.
+
+### 3.2.2 Seasonal Plot Analysis
+
+Let us do some data wrangling to plot a seasonal plot. To begin the preparation, filter the date to analyse year 2020 to 2024.
+
+```{r}
+total_continent <- trade_month %>%
+  filter(between(Date, as.Date("2020-01-01"), as.Date("2024-12-31"))) %>% 
+  group_by(Date) %>%
+  summarise(across(where(is.numeric), sum, na.rm = TRUE))
+```
+
+Create a new column "Month" to show the monthly seasonality.
+
+```{r}
+total_continent <- total_continent %>%
+  mutate(Month = yearmonth(Date)) %>% 
+  as_tsibble(index = Month)
+```
+
+```{r}
+total_continent <- total_continent %>% 
+  pivot_longer(cols = c(2:6),
+               names_to = "Continent",
+               values_to = "Value") %>% 
+  mutate(Value = Value/1000)
+```
+
+```{r, fig.height=8, fig.width=8}
+total_continent %>% 
+  gg_season(Value, size = 0.8)
+```
+
+**Insights from Seasonal Plot:**
+
+1.  The pattern for all 5 continents are quite similar. In all 5 continents, the trade value for year 2020 is relatively low.
+2.  In 2023, the trade value for all continents except for Africa, peaks around the month of March.
+3.  The highest trade value for all continents are in year in 2022 and 2024. Year 2022 is significantly higher in Asia, Europe and Oceania.
+
+### 3.2.3 Cycle Plot Analysis
+
+The cycle plot below will show the pattern from year to year in each month. This plot will show whether there is repeated patterns in each month for every continent.
+
+```{r}
+total_continent %>% 
+  gg_subseries(Value)
+```
+
+From the plot above, we can roughly see quite a similar pattern in each month. For all continents in 2022, the highest peak is in the month of August. In the month of February and March, the pattern tends to be more random as compared to other months.

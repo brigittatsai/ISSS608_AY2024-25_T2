@@ -453,7 +453,7 @@ trade_continent <- read_csv("data/trade_continent.csv")
 
 To begin with the imports and exports analysis, we are going to refer to the SingStat website to look up 3 visualisations that we find interesting. However, to enhance the analysis, we will comment the pros and cons of each visual reference and create an improved version of the visuals.
 
-## 3.1 Comments on Visualizations
+## 3.1 Visualisation Make-Overs
 
 Let us begin this section with the pros and cons of 3 visualisations.
 
@@ -654,8 +654,7 @@ Now let us have a look at the final visualisation, showing the non-oil domestic 
 
 ### Visual Make-Over
 
-::: {.callout-note collapse="true"}
-## Data Wrangling
+::: details Click to expand \### Data Wrangling
 
 Before showing the visual make-over, it is necessary to do some data wrangling as it is from different data source, which is the **Merchandise Trade by Commodity Section** **(At Current Price), Monthly** dataset. Let us prepare the data using the code below.
 
@@ -693,5 +692,36 @@ nonoil <- nonoil %>%
 nonoil <- nonoil %>% 
   select(Category, Total)
 ```
-:::
+
+```{r}
+nonoil <- nonoil %>% 
+  mutate(Total = round(Total/1000000, 1))
+```
+
+```{r, fig.width=9, fig.height=6}
+nonoil <- nonoil %>%
+  mutate(Percentage = Total / sum(Total) * 100)
+
+total_value <- sum(nonoil$Total)
+
+ggplot(nonoil, aes(x = reorder(Category, Total), y = Total)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  geom_text(aes(label = paste0(Total, " (", round(Percentage, 1), "%)")),
+            hjust = -0.2, size = 3) +
+  ggtitle("Non-Oil Domestic Exports 2024", paste("Total:", "S$", total_value, "Billion")) +
+  scale_y_continuous(limits = c(0, 90)) +
+  coord_flip() +  
+  labs(x = "Non-Oil Goods", y = "Total Value (S$ Billion)") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 12, face = "bold"),
+        axis.text.y = element_text(size = 8),
+        axis.title.x = element_text(face = "bold"),
+        axis.title.y = element_text(face = "bold"))
+```
+
+What are the key improvements of the make-over visualisation?
+
+1.  Each category is separated to different bar charts and no longer stacked, showing the value of each category efficiently and improves the readability.
+2.  The data is sorted from highest value to lowest value, highlighting the top non-oil category with highest trade value. Each category also shows the percentage, representing the share of each non-oil goods.
 :::

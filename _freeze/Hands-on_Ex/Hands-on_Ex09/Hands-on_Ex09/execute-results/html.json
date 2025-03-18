@@ -1,0 +1,15 @@
+{
+  "hash": "7f16daf624e5a242b0b32f2e4868b8b1",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Hands-on Exercise 9\"\nauthor: \"Brigitta Karen Tsai\"\ndate: \"March 18, 2025\"\ndate-modified: \"last-modified\"\nexecute: \n  eval: true\n  echo: true\n  message: false\n  freeze: true\n---\n\n\n# 1 Getting Started\n\n## 1.1 Install and Load R Packages\n\n\n::: {.cell}\n\n```{.r .cell-code}\npacman::p_load(igraph, tidygraph, ggraph, \n               visNetwork, lubridate, clock,\n               tidyverse, graphlayouts)\n```\n:::\n\n\n## 1.2 Import Data\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

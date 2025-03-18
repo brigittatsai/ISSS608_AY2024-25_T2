@@ -1,0 +1,23 @@
+---
+title: "Hands-on Exercise 9"
+author: "Brigitta Karen Tsai"
+date: "March 18, 2025"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+---
+
+# 1 Getting Started
+
+## 1.1 Install and Load R Packages
+
+```{r}
+pacman::p_load(igraph, tidygraph, ggraph, 
+               visNetwork, lubridate, clock,
+               tidyverse, graphlayouts)
+```
+
+## 1.2 Import Data

@@ -35,7 +35,7 @@ GAStech_edges <- GAStech_edges %>%
                         abbr = FALSE)) # Derive weekdays
 ```
 
-The code chunk below is to aggregate the data based on source, target and the weekday to simplify the dataframe.
+The code chunk below is to aggregate the data based on source, target and the weekday to simplify the dataframe. The code "filter(source!=target) is to avoid same source and target value.
 
 ```{r}
 GAStech_edges_aggregated <- GAStech_edges %>%

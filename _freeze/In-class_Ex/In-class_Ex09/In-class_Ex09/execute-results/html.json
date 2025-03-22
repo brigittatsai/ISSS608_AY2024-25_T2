@@ -1,0 +1,15 @@
+{
+  "hash": "5197da66c4aa8c22600cbe9fcc816ced",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"In-class Exercise 9\"\nauthor: \"Brigitta Karen Tsai\"\ndate: \"March 22, 2025\"\ndate-modified: \"last-modified\"\nexecute: \n  eval: true\n  echo: true\n  message: false\n  freeze: true\n---\n\n\n## 1 Load R Packages\n\n\n::: {.cell}\n\n```{.r .cell-code}\npacman::p_load(igraph, tidygraph, ggraph, \n               visNetwork, lubridate, clock,\n               tidyverse, graphlayouts)\n```\n:::\n\n\n## 2 Import Data\n\n\n::: {.cell}\n\n```{.r .cell-code}\nGAStech_nodes <- read_csv(\"data/GAStech_email_node.csv\")\n```\n\n::: {.cell-output .cell-output-stderr}\n\n```\nRows: 54 Columns: 4\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr (3): label, Department, Title\ndbl (1): id\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\n```\n\n\n:::\n\n```{.r .cell-code}\nGAStech_edges <- read_csv(\"data/GAStech_email_edge-v2.csv\")\n```\n\n::: {.cell-output .cell-output-stderr}\n\n```\nRows: 9063 Columns: 8\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr  (5): SentDate, Subject, MainSubject, sourceLabel, targetLabel\ndbl  (2): source, target\ntime (1): SentTime\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\n```\n\n\n:::\n:::\n\n\n## 3 Data Wrangling\n\n\n::: {.cell}\n\n```{.r .cell-code}\nGAStech_edges <- GAStech_edges %>%\n  mutate(SendDate = dmy(SentDate)) %>% # Change format to dmy\n  mutate(Weekday = wday(SentDate,\n                        label = TRUE,\n                        abbr = FALSE)) # Derive weekdays\n```\n:::\n\n\nThe code chunk below is to aggregate the data based on source, target and the weekday to simplify the dataframe.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nGAStech_edges_aggregated <- GAStech_edges %>%\n  filter(MainSubject == \"Work related\") %>%\n  group_by(source, target, Weekday) %>%\n    summarise(Weight = n()) %>%\n  filter(source!=target) %>%\n  filter(Weight > 1) %>%\n  ungroup()\n```\n\n::: {.cell-output .cell-output-stderr}\n\n```\n`summarise()` has grouped output by 'source', 'target'. You can override using\nthe `.groups` argument.\n```\n\n\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

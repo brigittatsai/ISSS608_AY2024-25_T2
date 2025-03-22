@@ -1,0 +1,48 @@
+---
+title: "In-class Exercise 9"
+author: "Brigitta Karen Tsai"
+date: "March 22, 2025"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+---
+
+## 1 Load R Packages
+
+```{r}
+pacman::p_load(igraph, tidygraph, ggraph, 
+               visNetwork, lubridate, clock,
+               tidyverse, graphlayouts)
+```
+
+## 2 Import Data
+
+```{r}
+GAStech_nodes <- read_csv("data/GAStech_email_node.csv")
+GAStech_edges <- read_csv("data/GAStech_email_edge-v2.csv")
+```
+
+## 3 Data Wrangling
+
+```{r}
+GAStech_edges <- GAStech_edges %>%
+  mutate(SendDate = dmy(SentDate)) %>% # Change format to dmy
+  mutate(Weekday = wday(SentDate,
+                        label = TRUE,
+                        abbr = FALSE)) # Derive weekdays
+```
+
+The code chunk below is to aggregate the data based on source, target and the weekday to simplify the dataframe.
+
+```{r}
+GAStech_edges_aggregated <- GAStech_edges %>%
+  filter(MainSubject == "Work related") %>%
+  group_by(source, target, Weekday) %>%
+    summarise(Weight = n()) %>%
+  filter(source!=target) %>%
+  filter(Weight > 1) %>%
+  ungroup()
+```

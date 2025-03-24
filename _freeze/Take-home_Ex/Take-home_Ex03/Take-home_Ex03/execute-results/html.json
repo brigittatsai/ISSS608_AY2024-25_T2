@@ -1,0 +1,15 @@
+{
+  "hash": "a6b220a7d8e073ca5124d7aef2b6184b",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Take-home Exercise 3\"\nauthor: \"Brigitta Karen Tsai\"\ndate: \"March 22, 2025\"\ndate-modified: \"last-modified\"\nexecute: \n  eval: true\n  echo: true\n  message: false\n  freeze: true\n---\n\n\n# Prototyping Modules for Visual Analytics Shiny Application\n\n# 1 Getting Started\n\n## 1.1 Install and Load R Packages\n\n\n::: {.cell}\n\n```{.r .cell-code}\npacman::p_load(sp, sf, raster, spatstat, tmap, tidyverse,\n               spNetwork, tmaptools)\n```\n:::\n\n\n## 1.2 Import Data\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

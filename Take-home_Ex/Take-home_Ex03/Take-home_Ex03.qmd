@@ -193,10 +193,10 @@ In the analysis, we aim to provide several aggregations to see the monthly weath
 
 ### 3.7.1 Rainfall Parameters
 
-To define the frequency of rainfall, we will use **"Heavy Rain"** as the baseline to define the frequency of rainfall in a defined period of time (weekly/monthly/quarterly).
+To define the frequency of rainfall, we will use **"Heavy Rain"** as the baseline to define the frequency of rainfall in a defined period of time (weekly/monthly/quarterly). Any daily rainfall recorded that is above or equal to **31 mm/day** is considered as heavy rain.
 
 ::: tabset-pane
-### Ship Dataframe
+### Rainfall Parameters
 
 ::: {.table .table-striped .table-hover .table-bordered}
 | Rain Type            | Total Daily Rainfall (mm) |

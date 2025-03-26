@@ -243,7 +243,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">1 Getting Started</a>
   <ul class="collapse">
   <li><a href="#install-and-load-r-packages" id="toc-install-and-load-r-packages" class="nav-link" data-scroll-target="#install-and-load-r-packages">1.1 Install and Load R Packages</a></li>
-  <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data">1.2 Import Data</a></li>
+  </ul></li>
+  <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data">2 Import Data</a>
+  <ul class="collapse">
+  <li><a href="#import-aspatial-data" id="toc-import-aspatial-data" class="nav-link" data-scroll-target="#import-aspatial-data">2.1 Import Aspatial Data</a></li>
+  <li><a href="#import-geospatial-data" id="toc-import-geospatial-data" class="nav-link" data-scroll-target="#import-geospatial-data">2.2 Import Geospatial Data</a></li>
+  </ul></li>
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation">3 Data Preparation</a>
+  <ul class="collapse">
+  <li><a href="#match-station-names" id="toc-match-station-names" class="nav-link" data-scroll-target="#match-station-names">3.1 Match Station Names</a></li>
+  <li><a href="#join-dataset" id="toc-join-dataset" class="nav-link" data-scroll-target="#join-dataset">3.2 Join Dataset</a></li>
+  <li><a href="#remove-unnecessary-columns" id="toc-remove-unnecessary-columns" class="nav-link" data-scroll-target="#remove-unnecessary-columns">3.3 Remove Unnecessary Columns</a></li>
+  <li><a href="#rename-columns" id="toc-rename-columns" class="nav-link" data-scroll-target="#rename-columns">3.4 Rename Columns</a></li>
+  <li><a href="#remove-missing-records" id="toc-remove-missing-records" class="nav-link" data-scroll-target="#remove-missing-records">3.5 Remove Missing Records</a></li>
+  <li><a href="#handling-date-data" id="toc-handling-date-data" class="nav-link" data-scroll-target="#handling-date-data">3.6 Handling Date Data</a></li>
+  <li><a href="#derive-parameters" id="toc-derive-parameters" class="nav-link" data-scroll-target="#derive-parameters">3.7 Derive Parameters</a>
+  <ul class="collapse">
+  <li><a href="#rainfall-parameters" id="toc-rainfall-parameters" class="nav-link" data-scroll-target="#rainfall-parameters">3.7.1 Rainfall Parameters</a></li>
+  <li><a href="#ship-dataframe" id="toc-ship-dataframe" class="nav-link" data-scroll-target="#ship-dataframe">Ship Dataframe</a></li>
+  </ul></li>
+  <li><a href="#combine-geometry" id="toc-combine-geometry" class="nav-link" data-scroll-target="#combine-geometry">3.8 Combine Geometry</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -277,7 +296,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">March 24, 2025</p>
+      <p class="date-modified">March 26, 2025</p>
     </div>
   </div>
     
@@ -297,11 +316,530 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="install-and-load-r-packages">1.1 Install and Load R Packages</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sp, sf, raster, spatstat, tmap, tidyverse,</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>               spNetwork, tmaptools)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>               spNetwork, tmaptools, raster, leaflet)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="import-data" class="level2">
-<h2 class="anchored" data-anchor-id="import-data">1.2 Import Data</h2>
+</section>
+<section id="import-data" class="level1">
+<h1>2 Import Data</h1>
+<section id="import-aspatial-data" class="level2">
+<h2 class="anchored" data-anchor-id="import-aspatial-data">2.1 Import Aspatial Data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>weather <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/aspatial/weather.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 6222 Columns: 13
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (1): station
+dbl (12): year, month, day, daily_rainfall_total_mm, highest_30_min_rainfall...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+</section>
+<section id="import-geospatial-data" class="level2">
+<h2 class="anchored" data-anchor-id="import-geospatial-data">2.2 Import Geospatial Data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">layer =</span> <span class="st">"MP14_SUBZONE_WEB_PL"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `MP14_SUBZONE_WEB_PL' from data source 
+  `C:\brigittatsai\ISSS608_AY2024-25_T2\Take-home_Ex\Take-home_Ex03\data\geospatial' 
+  using driver `ESRI Shapefile'
+Simple feature collection with 323 features and 15 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33
+Projected CRS: SVY21</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="data-preparation" class="level1">
+<h1>3 Data Preparation</h1>
+<section id="match-station-names" class="level2">
+<h2 class="anchored" data-anchor-id="match-station-names">3.1 Match Station Names</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sort</span>(<span class="fu">unique</span>(weather<span class="sc">$</span>station))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Admiralty"             "Ang Mo Kio"            "Changi"               
+ [4] "Choa Chu Kang (South)" "Clementi"              "East Coast Parkway"   
+ [7] "Jurong (West)"         "Jurong Island"         "Newton"               
+[10] "Pasir Panjang"         "Paya Lebar"            "Pulau Ubin"           
+[13] "Seletar"               "Sembawang"             "Sentosa Island"       
+[16] "Tai Seng"              "Tuas South"           </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sort</span>(<span class="fu">unique</span>(mpsz<span class="sc">$</span>SUBZONE_N))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] "ADMIRALTY"                     "AIRPORT ROAD"                 
+  [3] "ALEXANDRA HILL"                "ALEXANDRA NORTH"              
+  [5] "ALJUNIED"                      "ANAK BUKIT"                   
+  [7] "ANCHORVALE"                    "ANG MO KIO TOWN CENTRE"       
+  [9] "ANSON"                         "BALESTIER"                    
+ [11] "BANGKIT"                       "BAYFRONT SUBZONE"             
+ [13] "BAYSHORE"                      "BEDOK NORTH"                  
+ [15] "BEDOK RESERVOIR"               "BEDOK SOUTH"                  
+ [17] "BENCOOLEN"                     "BENDEMEER"                    
+ [19] "BENOI SECTOR"                  "BIDADARI"                     
+ [21] "BISHAN EAST"                   "BOAT QUAY"                    
+ [23] "BOON KENG"                     "BOON LAY PLACE"               
+ [25] "BOON TECK"                     "BOULEVARD"                    
+ [27] "BRADDELL"                      "BRAS BASAH"                   
+ [29] "BRICKWORKS"                    "BUGIS"                        
+ [31] "BUKIT BATOK CENTRAL"           "BUKIT BATOK EAST"             
+ [33] "BUKIT BATOK SOUTH"             "BUKIT BATOK WEST"             
+ [35] "BUKIT HO SWEE"                 "BUKIT MERAH"                  
+ [37] "CAIRNHILL"                     "CECIL"                        
+ [39] "CENTRAL SUBZONE"               "CENTRAL WATER CATCHMENT"      
+ [41] "CHANGI AIRPORT"                "CHANGI BAY"                   
+ [43] "CHANGI POINT"                  "CHANGI WEST"                  
+ [45] "CHATSWORTH"                    "CHENG SAN"                    
+ [47] "CHIN BEE"                      "CHINA SQUARE"                 
+ [49] "CHINATOWN"                     "CHOA CHU KANG CENTRAL"        
+ [51] "CHOA CHU KANG NORTH"           "CHONG BOON"                   
+ [53] "CITY HALL"                     "CITY TERMINALS"               
+ [55] "CLARKE QUAY"                   "CLEMENTI CENTRAL"             
+ [57] "CLEMENTI NORTH"                "CLEMENTI WEST"                
+ [59] "CLEMENTI WOODS"                "CLIFFORD PIER"                
+ [61] "COMMONWEALTH"                  "COMPASSVALE"                  
+ [63] "CONEY ISLAND"                  "CORONATION ROAD"              
+ [65] "CRAWFORD"                      "DAIRY FARM"                   
+ [67] "DEFU INDUSTRIAL PARK"          "DEPOT ROAD"                   
+ [69] "DHOBY GHAUT"                   "DOVER"                        
+ [71] "DUNEARN"                       "EAST COAST"                   
+ [73] "EVERTON PARK"                  "FABER"                        
+ [75] "FAJAR"                         "FARRER COURT"                 
+ [77] "FARRER PARK"                   "FERNVALE"                     
+ [79] "FLORA DRIVE"                   "FORT CANNING"                 
+ [81] "FRANKEL"                       "GALI BATU"                    
+ [83] "GEYLANG BAHRU"                 "GEYLANG EAST"                 
+ [85] "GHIM MOH"                      "GOMBAK"                       
+ [87] "GOODWOOD PARK"                 "GREENWOOD PARK"               
+ [89] "GUILIN"                        "GUL BASIN"                    
+ [91] "GUL CIRCLE"                    "HENDERSON HILL"               
+ [93] "HILLCREST"                     "HILLVIEW"                     
+ [95] "HOLLAND DRIVE"                 "HOLLAND ROAD"                 
+ [97] "HONG KAH"                      "HONG KAH NORTH"               
+ [99] "HOUGANG CENTRAL"               "HOUGANG EAST"                 
+[101] "HOUGANG WEST"                  "INSTITUTION HILL"             
+[103] "INTERNATIONAL BUSINESS PARK"   "ISTANA NEGARA"                
+[105] "JELEBU"                        "JOO KOON"                     
+[107] "JOO SENG"                      "JURONG GATEWAY"               
+[109] "JURONG ISLAND AND BUKOM"       "JURONG PORT"                  
+[111] "JURONG RIVER"                  "JURONG WEST CENTRAL"          
+[113] "KAKI BUKIT"                    "KALLANG BAHRU"                
+[115] "KALLANG WAY"                   "KAMPONG BUGIS"                
+[117] "KAMPONG GLAM"                  "KAMPONG JAVA"                 
+[119] "KAMPONG TIONG BAHRU"           "KAMPONG UBI"                  
+[121] "KANGKAR"                       "KATONG"                       
+[123] "KEAT HONG"                     "KEBUN BAHRU"                  
+[125] "KEMBANGAN"                     "KENT RIDGE"                   
+[127] "KHATIB"                        "KIAN TECK"                    
+[129] "KIM KEAT"                      "KOVAN"                        
+[131] "KRANJI"                        "LAKESIDE"                     
+[133] "LAVENDER"                      "LEEDON PARK"                  
+[135] "LEONIE HILL"                   "LIM CHU KANG"                 
+[137] "LITTLE INDIA"                  "LIU FANG"                     
+[139] "LORONG 8 TOA PAYOH"            "LORONG AH SOO"                
+[141] "LORONG CHUAN"                  "LORONG HALUS"                 
+[143] "LORONG HALUS NORTH"            "LOWER SELETAR"                
+[145] "LOYANG EAST"                   "LOYANG WEST"                  
+[147] "MACKENZIE"                     "MACPHERSON"                   
+[149] "MALCOLM"                       "MANDAI EAST"                  
+[151] "MANDAI ESTATE"                 "MANDAI WEST"                  
+[153] "MARGARET DRIVE"                "MARINA CENTRE"                
+[155] "MARINA EAST"                   "MARINA EAST (MP)"             
+[157] "MARINA SOUTH"                  "MARINE PARADE"                
+[159] "MARITIME SQUARE"               "MARYMOUNT"                    
+[161] "MATILDA"                       "MAXWELL"                      
+[163] "MEI CHIN"                      "MIDVIEW"                      
+[165] "MONK'S HILL"                   "MOULMEIN"                     
+[167] "MOUNT EMILY"                   "MOUNT PLEASANT"               
+[169] "MOUNTBATTEN"                   "NASSIM"                       
+[171] "NATIONAL UNIVERSITY OF S'PORE" "NATURE RESERVE"               
+[173] "NEE SOON"                      "NEWTON CIRCUS"                
+[175] "NORTH-EASTERN ISLANDS"         "NORTH COAST"                  
+[177] "NORTHLAND"                     "NORTHSHORE"                   
+[179] "ONE NORTH"                     "ONE TREE HILL"                
+[181] "ORANGE GROVE"                  "OXLEY"                        
+[183] "PANDAN"                        "PANG SUA"                     
+[185] "PASIR PANJANG 1"               "PASIR PANJANG 2"              
+[187] "PASIR RIS CENTRAL"             "PASIR RIS DRIVE"              
+[189] "PASIR RIS PARK"                "PASIR RIS WAFER FAB PARK"     
+[191] "PASIR RIS WEST"                "PATERSON"                     
+[193] "PAYA LEBAR EAST"               "PAYA LEBAR NORTH"             
+[195] "PAYA LEBAR WEST"               "PEARL'S HILL"                 
+[197] "PEI CHUN"                      "PENG SIANG"                   
+[199] "PENJURU CRESCENT"              "PEOPLE'S PARK"                
+[201] "PHILLIP"                       "PIONEER SECTOR"               
+[203] "PLAB"                          "PORT"                         
+[205] "POTONG PASIR"                  "PULAU PUNGGOL BARAT"          
+[207] "PULAU PUNGGOL TIMOR"           "PULAU SELETAR"                
+[209] "PUNGGOL CANAL"                 "PUNGGOL FIELD"                
+[211] "PUNGGOL TOWN CENTRE"           "QUEENSWAY"                    
+[213] "RAFFLES PLACE"                 "REDHILL"                      
+[215] "RESERVOIR VIEW"                "RIDOUT"                       
+[217] "RIVERVALE"                     "ROBERTSON QUAY"               
+[219] "ROCHOR CANAL"                  "SAFTI"                        
+[221] "SAMULUN"                       "SAUJANA"                      
+[223] "SELEGIE"                       "SELETAR"                      
+[225] "SELETAR AEROSPACE PARK"        "SELETAR HILLS"                
+[227] "SEMAKAU"                       "SEMBAWANG CENTRAL"            
+[229] "SEMBAWANG EAST"                "SEMBAWANG HILLS"              
+[231] "SEMBAWANG NORTH"               "SEMBAWANG SPRINGS"            
+[233] "SEMBAWANG STRAITS"             "SENGKANG TOWN CENTRE"         
+[235] "SENGKANG WEST"                 "SENJA"                        
+[237] "SENNETT"                       "SENOKO NORTH"                 
+[239] "SENOKO SOUTH"                  "SENOKO WEST"                  
+[241] "SENTOSA"                       "SERANGOON CENTRAL"            
+[243] "SERANGOON GARDEN"              "SERANGOON NORTH"              
+[245] "SERANGOON NORTH IND ESTATE"    "SHANGRI-LA"                   
+[247] "SHIPYARD"                      "SIGLAP"                       
+[249] "SIMEI"                         "SIMPANG NORTH"                
+[251] "SIMPANG SOUTH"                 "SINGAPORE GENERAL HOSPITAL"   
+[253] "SINGAPORE POLYTECHNIC"         "SOMERSET"                     
+[255] "SOUTHERN GROUP"                "SPRINGLEAF"                   
+[257] "STRAITS VIEW"                  "SUDONG"                       
+[259] "SUNGEI ROAD"                   "SUNSET WAY"                   
+[261] "SWISS CLUB"                    "TAGORE"                       
+[263] "TAI SENG"                      "TAMAN JURONG"                 
+[265] "TAMPINES EAST"                 "TAMPINES NORTH"               
+[267] "TAMPINES WEST"                 "TANGLIN"                      
+[269] "TANGLIN HALT"                  "TANJONG IRAU"                 
+[271] "TANJONG PAGAR"                 "TANJONG RHU"                  
+[273] "TEBAN GARDENS"                 "TECK WHYE"                    
+[275] "TELOK BLANGAH DRIVE"           "TELOK BLANGAH RISE"           
+[277] "TELOK BLANGAH WAY"             "TENGAH"                       
+[279] "TENGEH"                        "THE WHARVES"                  
+[281] "TIONG BAHRU"                   "TIONG BAHRU STATION"          
+[283] "TOA PAYOH CENTRAL"             "TOA PAYOH WEST"               
+[285] "TOH GUAN"                      "TOH TUCK"                     
+[287] "TOWNSVILLE"                    "TRAFALGAR"                    
+[289] "TUAS BAY"                      "TUAS NORTH"                   
+[291] "TUAS PROMENADE"                "TUAS VIEW"                    
+[293] "TUAS VIEW EXTENSION"           "TUKANG"                       
+[295] "TURF CLUB"                     "TYERSALL"                     
+[297] "ULU PANDAN"                    "UPPER PAYA LEBAR"             
+[299] "UPPER THOMSON"                 "VICTORIA"                     
+[301] "WATERWAY EAST"                 "WENYA"                        
+[303] "WEST COAST"                    "WESTERN WATER CATCHMENT"      
+[305] "WOODGROVE"                     "WOODLANDS EAST"               
+[307] "WOODLANDS REGIONAL CENTRE"     "WOODLANDS SOUTH"              
+[309] "WOODLANDS WEST"                "WOODLEIGH"                    
+[311] "XILIN"                         "YEW TEE"                      
+[313] "YIO CHU KANG"                  "YIO CHU KANG EAST"            
+[315] "YIO CHU KANG NORTH"            "YIO CHU KANG WEST"            
+[317] "YISHUN CENTRAL"                "YISHUN EAST"                  
+[319] "YISHUN SOUTH"                  "YISHUN WEST"                  
+[321] "YUHUA EAST"                    "YUHUA WEST"                   
+[323] "YUNNAN"                       </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">&lt;-</span> mpsz <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">SUBZONE_N =</span> <span class="fu">case_when</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">==</span> <span class="st">"ADMIRALTY"</span> <span class="sc">~</span> <span class="st">"Admiralty"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">==</span> <span class="st">"ANG MO KIO TOWN CENTRE"</span> <span class="sc">~</span> <span class="st">"Ang Mo Kio"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"CHANGI AIRPORT"</span>, <span class="st">"CHANGI BAY"</span>, </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"CHANGI POINT"</span>, <span class="st">"CHANGI WEST"</span>) <span class="sc">~</span> <span class="st">"Changi"</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">==</span> <span class="st">"CHOA CHU KANG CENTRAL"</span> <span class="sc">~</span> <span class="st">"Choa Chu Kang (South)"</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">==</span> <span class="st">"CLEMENTI CENTRAL"</span> <span class="sc">~</span> <span class="st">"Clementi"</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">==</span> <span class="st">"EAST COAST"</span> <span class="sc">~</span> <span class="st">"East Coast Parkway"</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">==</span> <span class="st">"JURONG WEST CENTRAL"</span> <span class="sc">~</span> <span class="st">"Jurong (West)"</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">==</span> <span class="st">"JURONG ISLAND AND BUKOM"</span> <span class="sc">~</span> <span class="st">"Jurong Island"</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">==</span> <span class="st">"NEWTON CIRCUS"</span> <span class="sc">~</span> <span class="st">"Newton"</span>,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"PASIR PANJANG 1"</span>, <span class="st">"PASIR PANJANG 2"</span>) <span class="sc">~</span> <span class="st">"Pasir Panjang"</span>,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"PAYA LEBAR EAST"</span>, <span class="st">"PAYA LEBAR NORTH"</span>, </span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"PAYA LEBAR WEST"</span>) <span class="sc">~</span> <span class="st">"Paya Lebar"</span>,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">==</span> <span class="st">"PULAU UBIN"</span> <span class="sc">~</span> <span class="st">"Pulau Ubin"</span>,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"SELETAR"</span>, <span class="st">"SELETAR AEROSPACE PARK"</span>) <span class="sc">~</span> <span class="st">"Seletar"</span>,</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"SEMBAWANG CENTRAL"</span>, <span class="st">"SEMBAWANG EAST"</span>, <span class="st">"SEMBAWANG NORTH"</span>,</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"SEMBAWANG SPRINGS"</span>, <span class="st">"SEMBAWANG STRAITS"</span>) <span class="sc">~</span> <span class="st">"Sembawang"</span>,</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">==</span> <span class="st">"SENTOSA"</span> <span class="sc">~</span> <span class="st">"Sentosa Island"</span>,</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">==</span> <span class="st">"TAI SENG"</span> <span class="sc">~</span> <span class="st">"Tai Seng"</span>,</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    SUBZONE_N <span class="sc">==</span> <span class="st">"TUAS BAY"</span> <span class="sc">~</span> <span class="st">"Tuas South"</span>,</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> SUBZONE_N</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="join-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="join-dataset">3.2 Join Dataset</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>weather_map <span class="ot">&lt;-</span> <span class="fu">left_join</span>(mpsz, weather,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"SUBZONE_N"</span> <span class="ot">=</span> <span class="st">"station"</span>),</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">relationship =</span> <span class="st">"many-to-many"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="remove-unnecessary-columns" class="level2">
+<h2 class="anchored" data-anchor-id="remove-unnecessary-columns">3.3 Remove Unnecessary Columns</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>weather_map <span class="ot">&lt;-</span> <span class="fu">subset</span>(weather_map, <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(OBJECTID, SUBZONE_NO, SUBZONE_C,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                                       PLN_AREA_C, REGION_C, FMEL_UPD_D, </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                                       CA_IND, INC_CRC))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="rename-columns" class="level2">
+<h2 class="anchored" data-anchor-id="rename-columns">3.4 Rename Columns</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>weather <span class="ot">&lt;-</span> weather <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Station =</span> station,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">Year =</span> year,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">Month =</span> month,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">Day =</span> day,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">rainfall_total =</span> daily_rainfall_total_mm,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">rainfall_30 =</span> highest_30_min_rainfall_mm,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">rainfall_60 =</span> highest_60_min_rainfall_mm,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">rainfall_120 =</span> highest_120_min_rainfall_mm,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">mean_temp =</span> mean_temperature_c,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">max_temp =</span> maximum_temperature_c,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">min_temp =</span> minimum_temperature_c,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">mean_wind =</span> mean_wind_speed_km_h,</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">max_wind =</span> max_wind_speed_km_h)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>weather_map <span class="ot">&lt;-</span> weather_map <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Station =</span> SUBZONE_N,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">Area =</span> PLN_AREA_N,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">Region =</span> REGION_N,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">Year =</span> year,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">Month =</span> month,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">Day =</span> day,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">rainfall_total =</span> daily_rainfall_total_mm,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">rainfall_30 =</span> highest_30_min_rainfall_mm,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">rainfall_60 =</span> highest_60_min_rainfall_mm,</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">rainfall_120 =</span> highest_120_min_rainfall_mm,</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">mean_temp =</span> mean_temperature_c,</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">max_temp =</span> maximum_temperature_c,</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">min_temp =</span> minimum_temperature_c,</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">mean_wind =</span> mean_wind_speed_km_h,</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">max_wind =</span> max_wind_speed_km_h)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="remove-missing-records" class="level2">
+<h2 class="anchored" data-anchor-id="remove-missing-records">3.5 Remove Missing Records</h2>
+<p>Define list of stations:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>stations <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Admiralty"</span>, <span class="st">"Ang Mo Kio"</span>, <span class="st">"Changi"</span>, <span class="st">"Choa Chu Kang (South)"</span>,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Clementi"</span>, <span class="st">"East Coast Parkway"</span>, <span class="st">"Jurong (West)"</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Jurong Island"</span>, <span class="st">"Newton"</span>, <span class="st">"Pasir Panjang"</span>, <span class="st">"Paya Lebar"</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Pulau Ubin"</span>, <span class="st">"Seletar"</span>, <span class="st">"Sembawang"</span>, <span class="st">"Sentosa Island"</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Tai Seng"</span>, <span class="st">"Tuas South"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>weather <span class="ot">&lt;-</span> weather <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(Station <span class="sc">%in%</span> stations <span class="sc">&amp;</span> (<span class="fu">is.na</span>(rainfall_total) <span class="sc">|</span> <span class="fu">is.na</span>(rainfall_30) <span class="sc">|</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">is.na</span>(rainfall_60) <span class="sc">|</span> <span class="fu">is.na</span>(rainfall_120) <span class="sc">|</span> </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">is.na</span>(mean_temp) <span class="sc">|</span> <span class="fu">is.na</span>(max_temp) <span class="sc">|</span> </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">is.na</span>(min_temp) <span class="sc">|</span> <span class="fu">is.na</span>(mean_wind) <span class="sc">|</span> </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">is.na</span>(max_wind))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>weather_map <span class="ot">&lt;-</span> weather_map <span class="sc">%&gt;%</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(Station <span class="sc">%in%</span> stations <span class="sc">&amp;</span> (<span class="fu">is.na</span>(rainfall_total) <span class="sc">|</span> <span class="fu">is.na</span>(rainfall_30) <span class="sc">|</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">is.na</span>(rainfall_60) <span class="sc">|</span> <span class="fu">is.na</span>(rainfall_120) <span class="sc">|</span> </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">is.na</span>(mean_temp) <span class="sc">|</span> <span class="fu">is.na</span>(max_temp) <span class="sc">|</span> </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">is.na</span>(min_temp) <span class="sc">|</span> <span class="fu">is.na</span>(mean_wind) <span class="sc">|</span> </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">is.na</span>(max_wind))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="handling-date-data" class="level2">
+<h2 class="anchored" data-anchor-id="handling-date-data">3.6 Handling Date Data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>weather <span class="ot">&lt;-</span> weather <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">yearmonth =</span> <span class="fu">make_date</span>(Year, Month, <span class="dv">1</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>weather_map <span class="ot">&lt;-</span> weather_map <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">yearmonth =</span> <span class="fu">make_date</span>(Year, Month, <span class="dv">1</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="derive-parameters" class="level2">
+<h2 class="anchored" data-anchor-id="derive-parameters">3.7 Derive Parameters</h2>
+<p>In the analysis, we aim to provide several aggregations to see the monthly weather conditions in the form of geospatial map. The following are the variables that we aim to show in the chart:</p>
+<p><strong>Weather Parameter:</strong></p>
+<ol type="1">
+<li>Rainfall</li>
+<li>Wind Speed</li>
+<li>Temperature</li>
+</ol>
+<p><strong>Measurement Options:</strong></p>
+<ol type="1">
+<li>Mean</li>
+<li>Maximum</li>
+<li>Frequency</li>
+</ol>
+<section id="rainfall-parameters" class="level3">
+<h3 class="anchored" data-anchor-id="rainfall-parameters">3.7.1 Rainfall Parameters</h3>
+<p>To define the frequency of rainfall</p>
+</section>
+<section id="ship-dataframe" class="level3 tabset-pane">
+<h3 class="anchored" data-anchor-id="ship-dataframe">Ship Dataframe</h3>
+<div class="table table-striped table-hover table-bordered">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Rain Type</th>
+<th>Total Daily Rainfall (mm)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>No Rain</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Very Light Rain</td>
+<td>0.1 - 0.9</td>
+</tr>
+<tr class="odd">
+<td>Light Rain</td>
+<td>1.0 - 10</td>
+</tr>
+<tr class="even">
+<td>Moderate Rain</td>
+<td>11 - 30</td>
+</tr>
+<tr class="odd">
+<td><strong>Heavy Rain</strong></td>
+<td><strong>31 - 70</strong></td>
+</tr>
+<tr class="even">
+<td>Very Heavy Rain</td>
+<td>71 - 150</td>
+</tr>
+<tr class="odd">
+<td>Extremely Heavy Rain</td>
+<td>&gt; 151</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="combine-geometry" class="level2">
+<h2 class="anchored" data-anchor-id="combine-geometry">3.8 Combine Geometry</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>weather_map <span class="ot">&lt;-</span> weather_map <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Station) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">geometry =</span> <span class="fu">st_union</span>(geometry)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">geometry =</span> <span class="fu">st_cast</span>(geometry, <span class="st">"MULTIPOLYGON"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a dataset with all combinations of yearmonth and Station (to keep all stations)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>all_combinations <span class="ot">&lt;-</span> weather_map <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span> <span class="co"># Drop geometry temporarily</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(yearmonth, Station) </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge the combinations back to weather_map to fill in missing rainfall data</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>monthly_rainfall <span class="ot">&lt;-</span> weather_map <span class="sc">%&gt;%</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(yearmonth, Station, geometry) <span class="sc">%&gt;%</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_rainfall =</span> <span class="cf">if</span> (<span class="fu">all</span>(<span class="fu">is.na</span>(rainfall_total))) <span class="cn">NA_real_</span> <span class="cf">else</span> <span class="fu">max</span>(rainfall_total, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rainfall =</span> <span class="cf">if</span> (<span class="fu">all</span>(<span class="fu">is.na</span>(rainfall_total))) <span class="cn">NA_real_</span> <span class="cf">else</span> <span class="fu">mean</span>(rainfall_total, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">right_join</span>(all_combinations, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"yearmonth"</span>, <span class="st">"Station"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(yearmonth, Station)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>months_2024 <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">ymd</span>(<span class="st">"2024-01-01"</span>), <span class="fu">ymd</span>(<span class="st">"2024-12-01"</span>), <span class="at">by =</span> <span class="st">"month"</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate rows with missing yearmonth</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>stations_missing_yearmonth <span class="ot">&lt;-</span> monthly_rainfall <span class="sc">%&gt;%</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(yearmonth)) <span class="sc">%&gt;%</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Duplicate rows for each month</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">yearmonth =</span> <span class="fu">list</span>(months_2024)) <span class="sc">%&gt;%</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(yearmonth)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>monthly_rainfall <span class="ot">&lt;-</span> monthly_rainfall <span class="sc">%&gt;%</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(yearmonth)) <span class="sc">%&gt;%</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(stations_missing_yearmonth) <span class="sc">%&gt;%</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Station, yearmonth)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Filter to January</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>jan_rainfall <span class="ot">&lt;-</span> monthly_rainfall <span class="sc">%&gt;%</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(yearmonth <span class="sc">==</span> <span class="st">"2024-01-01"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>jan_rainfall_with_data <span class="ot">&lt;-</span> jan_rainfall <span class="sc">%&gt;%</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(max_rainfall))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ tmap mode set to "plot".</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(jan_rainfall) <span class="sc">+</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title =</span> <span class="st">"January Max Rainfall (mm)"</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title.size =</span> <span class="fl">1.2</span>,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"RIGHT"</span>, <span class="st">"BOTTOM"</span>),</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title.size =</span> <span class="fl">0.8</span>,</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.text.size =</span> <span class="fl">0.8</span>,</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.outside =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.outside.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.frame =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">frame =</span> <span class="cn">TRUE</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(jan_rainfall_with_data) <span class="sc">+</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"max_rainfall"</span>, </span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette =</span> <span class="st">"Blues"</span>,</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">title.col =</span> <span class="st">"Max Rainfall (mm)"</span>,</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">popup.vars =</span> <span class="fu">c</span>(<span class="st">"Station"</span>, <span class="st">"max_rainfall"</span>),</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.size.show =</span> <span class="cn">FALSE</span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(jan_rainfall_with_data) <span class="sc">+</span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_text</span>(<span class="st">"Station"</span>, <span class="at">size =</span> <span class="fl">0.7</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">shadow =</span> <span class="cn">FALSE</span>, <span class="at">ymod=</span><span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_basemap</span>(<span class="st">"CartoDB.Positron"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[v3-&gt;v4] `tm_layout()`: use `tm_title()` instead of `tm_layout(main.title = )`
+
+
+── tmap v3 code detected ───────────────────────────────────────────────────────
+
+[v3-&gt;v4] `tm_symbols()`: migrate the argument(s) related to the scale of the
+visual variable `fill` namely 'palette' (rename to 'values') to fill.scale =
+tm_scale(&lt;HERE&gt;).
+[v3-&gt;v4] `symbols()`: use 'fill' for the fill color of polygons/symbols
+(instead of 'col'), and 'col' for the outlines (instead of 'border.col').
+[v3-&gt;v4] `symbols()`: migrate the argument(s) related to the legend of the
+visual variable `fill` namely 'title.col' (rename to 'title') to 'fill.legend =
+tm_legend(&lt;HERE&gt;)'
+[v3-&gt;v4] `symbols()`: use `size.legend = tm_legend_hide()` instead of
+`legend.size.show = FALSE`.
+[v3-&gt;v4] `tm_text()`: migrate the layer options 'shadow' to 'options =
+opt_tm_text(&lt;HERE&gt;)'
+[cols4all] color palettes: use palettes from the R package cols4all. Run
+`cols4all::c4a_gui()` to explore them. The old palette name "Blues" is named
+"brewer.blues"
+Multiple palettes called "blues" found: "brewer.blues", "matplotlib.blues". The first one, "brewer.blues", is returned.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+|---------|---------|---------|---------|
+=========================================
+                                          </code></pre>
+</div>
+</div>
 
 
 </section>

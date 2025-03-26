@@ -163,7 +163,6 @@ tm_shape(mpsz_pop2020)+
   tm_borders(alpha = 0.5)
 ```
 
-
 Each method gives different dependency classifications due to different interpretation of groupings and data distribution from each method. Fixed method requires break points in order to be plotted.
 
 ### 4.7 Plotting choropleth map with custome break
@@ -180,6 +179,7 @@ tm_shape(mpsz_pop2020)+
 ```
 
 ### 4.8 Colour Scheme
+
 #### 4.8.1 Using ColourBrewer Palette
 
 ```{r}
@@ -190,6 +190,7 @@ tm_shape(mpsz_pop2020)+
           palette = "Blues") +
   tm_borders(alpha = 0.5)
 ```
+
 Reversing colour shading
 
 ```{r}
@@ -201,6 +202,7 @@ tm_shape(mpsz_pop2020)+
 ```
 
 ### 4.9 Map Layouts
+
 #### 4.9.1 Map Legend
 
 ```{r}
@@ -249,7 +251,7 @@ tm_shape(mpsz_pop2020) +
              position = c("left", "bottom"))
 ```
 
-In the original code chunk, tm_scale_intervals() and tm_title() does not exist as a function. 
+In the original code chunk, tm_scale_intervals() and tm_title() does not exist as a function.
 
 ## 5 Drawing Small Multiple Choropleth Maps
 
@@ -272,7 +274,6 @@ tm_shape(mpsz_pop2020)+
           palette = list("Blues","Greens")) +
   tm_layout(legend.position = c("right", "bottom"))
 ```
-
 
 ### 5.2 By defining a groupby variable in tm_facets()
 
@@ -331,6 +332,7 @@ tm_shape(mpsz_pop2020[mpsz_pop2020$REGION_N=="CENTRAL REGION", ])+
 ```{r}
 sgpools <- read_csv("data/aspatial/SGPools_svy21.csv")
 ```
+
 ```{r}
 list(sgpools) 
 ```
@@ -395,7 +397,6 @@ tm_shape(sgpools_sf) +
 ```{r}
 tmap_mode("plot")
 ```
-
 
 # Part 3: Analytical Mapping
 
@@ -462,18 +463,19 @@ tm_shape(NGA_wp) +
             legend.outside = TRUE)
 ```
 
-
 ## 4 Extreme Value Maps
 
 ### 4.1 Percentile Map
 
 Step 1: Exclude null values
+
 ```{r}
 NGA_wp <- NGA_wp %>%
   drop_na()
 ```
 
 Step 2: Create customised classification and extract values
+
 ```{r}
 percent <- c(0,.01,.1,.5,.9,.99,1)
 var <- NGA_wp["pct_functional"] %>%
@@ -482,6 +484,7 @@ quantile(var[,1], percent)
 ```
 
 Step 3: Create get.var function
+
 ```{r}
 get.var <- function(vname,df) {
   v <- df[vname] %>% 
@@ -492,6 +495,7 @@ get.var <- function(vname,df) {
 ```
 
 Step 4: A percentile mapping function
+
 ```{r}
 percentmap <- function(vnam, df, legtitle=NA, mtitle="Percentile Map"){
   percent <- c(0,.01,.1,.5,.9,.99,1)
@@ -601,4 +605,3 @@ boxmap <- function(vnam, df,
 tmap_mode("plot")
 boxmap("wp_nonfunctional", NGA_wp)
 ```
-

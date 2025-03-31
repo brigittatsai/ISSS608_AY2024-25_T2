@@ -771,6 +771,10 @@ ggplot(monthly_rainfall_station, aes(x = yearmonth, y = frequency_heavy_rain)) +
   facet_wrap(~Station, ncol = 4)
 ```
 
-# 5 Visual Storyboard Plan
+# 5 Shiny App Plan
 
-The geospatial map visuals will be implemented on **Shiny Web Application.** To ensure a smooth workflow and to enhance user experience,
+The geospatial map visuals will be implemented on **Shiny Web Application.** To ensure a smooth workflow and to enhance user experience, there will be 2 sub-tabs, the first tab will be showing the geospatial map and the second tab will be showing something similar to prototype 3, showing the frequency of selected weather parameters in the form of bar chart. Filter bars will be implemented on the sidebar of the shiny app, to select the following variables:
+
+1.  **Time Period Filter**: will consist of the month of January to December for 2024
+2.  **Weather Parameter Filter**: will consist of the selections of weather parameters, rainfall/ temperature/ wind speed
+3.  **Aggregation Filter**: will consist of selections of aggregations, mean/ max/ frequency

@@ -19,7 +19,7 @@ execute:
 ```{r}
 pacman::p_load(sp, sf, raster, spatstat, tmap, tidyverse,
                spNetwork, tmaptools, raster, leaflet, patchwork, gridExtra,
-               ggplot2, png, grid, terra, gstat, viridis, automap)
+               ggplot2, png, grid, terra, gstat, viridis, automap, stars)
 ```
 
 # 2 Import Data
@@ -420,6 +420,11 @@ monthly_rainfall <- st_sf(monthly_rainfall_no_geom,
                           geometry = st_geometry(monthly_rainfall))
 ```
 
+```{r}
+monthly_rainfall <- monthly_rainfall %>%
+  mutate(month = format(ymd(yearmonth), "%B"))
+```
+
 ### 3.9.2 Temperature Parameter
 
 ::: tabset-pane
@@ -463,6 +468,11 @@ monthly_temp_no_geom <- left_join(monthly_temp_no_geom, frequency_high_heat,
 # 3. Add the geometry column back to the joined dataframe
 monthly_temp <- st_sf(monthly_temp_no_geom,
                           geometry = st_geometry(monthly_temp))
+```
+
+```{r}
+monthly_temp <- monthly_temp %>%
+  mutate(month = format(ymd(yearmonth), "%B"))
 ```
 
 ### 3.9.3 Wind Speed Parameter
@@ -522,14 +532,55 @@ monthly_wind <- st_sf(monthly_wind_no_geom,
                           geometry = st_geometry(monthly_wind))
 ```
 
-# 4 Prototype
+```{r}
+monthly_wind <- monthly_wind %>%
+  mutate(month = format(ymd(yearmonth), "%B"))
+```
 
-## 4.1 Inverse Distance Weighted (IDW)
+## 3.10 Remove Missing Values
 
 ```{r}
-monthly_rainfall_with_data <- monthly_rainfall %>%
-  filter(!is.na(frequency_heavy_rain))
+monthly_rainfall <- na.omit(monthly_rainfall)
+monthly_temp <- na.omit(monthly_temp)
+monthly_wind <- na.omit(monthly_wind)
 ```
+
+## 3.11 Combine Monthly Data
+
+```{r}
+# Extract geometry from monthly_temp (assuming geometry is the same across all dataframes)
+geometry_data <- monthly_temp %>% select(Station, yearmonth, month, geometry)
+
+# Drop geometry using st_drop_geometry()
+monthly_temp_no_geom <- monthly_temp %>% st_drop_geometry()
+monthly_rainfall_no_geom <- monthly_rainfall %>% st_drop_geometry()
+monthly_wind_no_geom <- monthly_wind %>% st_drop_geometry()
+
+# Perform full joins on non-spatial data
+monthly_weather_no_geom <- monthly_temp_no_geom %>%
+  full_join(monthly_rainfall_no_geom, by = c("Station", "yearmonth", "month")) %>%
+  full_join(monthly_wind_no_geom, by = c("Station", "yearmonth", "month"))
+
+# Reattach the geometry column
+monthly_weather <- left_join(monthly_weather_no_geom, geometry_data, by = c("Station", "yearmonth", "month"))
+
+# Convert back to an sf object
+monthly_weather <- st_as_sf(monthly_weather)
+```
+
+## 3.12 Write Data to RDS
+
+```{r}
+write_rds(monthly_weather, "data/rds/monthly_weather.rds", compress = "xz")
+write_rds(daily_weather, "data/rds/daily_weather.rds", compress = "xz")
+write_rds(monthly_rainfall, "data/rds/monthly_rainfall.rds", compress = "xz")
+write_rds(monthly_temp, "data/rds/monthly_temp.rds", compress = "xz")
+write_rds(monthly_wind, "data/rds/monthly_wind.rds", compress = "xz")
+```
+
+# 4 Prototype
+
+## 4.1 Inverse Distance Weighted (IDW) Visual
 
 ```{r}
 grid <- terra::rast(mpsz, 
@@ -554,7 +605,7 @@ head(coop)
 
 ```{r}
 res <- gstat(formula = frequency_heavy_rain ~ 1, 
-             locations = monthly_rainfall_with_data, 
+             locations = monthly_rainfall, 
              nmax = 5,
              set = list(idp = 0))
 ```
@@ -568,36 +619,31 @@ resp$x <- st_coordinates(resp)[,1]
 resp$y <- st_coordinates(resp)[,2]
 resp$pred <- resp$var1.pred
 
-pred <- terra::rasterize(resp, grid, 
+idw <- terra::rasterize(resp, grid, 
                          field = "pred", 
                          fun = "mean")
+
+write_rds(idw, "data/rds/idw.rds", compress = "xz")
 ```
 
 ```{r, fig.width=12, fig.height=10}
 tm_check_fix()
 tmap_mode("plot")
-tm_shape(pred) +
+tm_shape(idw) +
   tm_raster(col_alpha = 0.6,
             col.scale = tm_scale(
               values = "brewer.blues")) +
   tm_title("IDW Mean Frequency of Heavy Rain", size=1.5) +
-  tm_shape(monthly_rainfall_with_data) +
+  tm_shape(monthly_weather) +
   tm_text("Station", size=1, col="black", alpha = 0.7)
 ```
 
 ## 4.2 Monthly Maximum Rainfall by Station
 
-```{r}
-jan_rainfall <- monthly_rainfall %>% 
-  filter(yearmonth == "2024-01-01")
-```
-
-```{r}
-jan_rainfall_with_data <- jan_rainfall %>%
-  filter(!is.na(max_rainfall))
-```
-
 ```{r, fig.width=10, fig.height=8}
+jan_rainfall <- monthly_rainfall %>% 
+  filter(month == "January")
+
 tmap_mode("plot")
 
 tm_shape(map) +
@@ -613,7 +659,7 @@ tm_shape(map) +
     legend.frame = FALSE,
     frame = TRUE
   ) +
-  tm_shape(jan_rainfall_with_data) +
+  tm_shape(jan_rainfall) +
   tm_symbols(
     col = "max_rainfall",  # Measurement Parameters here
     palette = "Blues",
@@ -621,13 +667,83 @@ tm_shape(map) +
     popup.vars = c("Station", "max_rainfall"),
     legend.size.show = FALSE
   ) +
-  tm_shape(jan_rainfall_with_data) +
+  tm_shape(jan_rainfall) +
+  tm_text("Station", size = 0.7, col = "black", shadow = FALSE, ymod=1) +
+  tm_grid(alpha = 0.2) +
+  tm_basemap("CartoDB.Positron")
+```
+
+```{r, fig.width=10, fig.height=8}
+tmap_mode("plot")
+ 
+tm_shape(map) +
+  tm_layout(
+    main.title = "Frequency of Heavy Rain in January 2024",
+    main.title.position = "center",
+    main.title.size = 1.2,
+    legend.position = c("RIGHT", "BOTTOM"),
+    legend.title.size = 0.8,
+    legend.text.size = 0.8,
+    legend.outside = TRUE,
+    legend.outside.position = "bottom",
+    legend.frame = FALSE,
+    frame = TRUE
+  ) +
+  tm_shape(jan_rainfall) +
+  tm_symbols(
+    col = "frequency_heavy_rain",  # Measurement Parameters here
+    palette = "Red",
+    title.col = "Frequency of Heavy Rain",
+    popup.vars = c("Station", "frequency_heavy_rain"),
+    legend.size.show = FALSE
+  ) +
+  tm_shape(jan_rainfall) +
   tm_text("Station", size = 0.7, col = "black", shadow = FALSE, ymod=-1) +
   tm_grid(alpha = 0.2) +
   tm_basemap("CartoDB.Positron")
 ```
 
-## 4.3 Visualising Frequency of Rainfall
+## 4.3 Prototype 3: Displaying Bar Chart for Frequency Measure
+
+### 4.3.1 Side by Side Comparison of Stations
+
+```{r, fig.width=10, fig.height=8}
+# These variables will act as the filter in the Shiny app
+selected_month <- "February"
+selected_variable <- "frequency_strong_wind"
+
+
+variable_titles <- list(
+  "frequency_heavy_rain" = "Heavy Rain",
+  "frequency_high_temperature" = "High Temperature",
+  "frequency_strong_wind" = "Strong Wind"
+)
+
+
+selected_variable_title <- variable_titles[[selected_variable]]
+
+
+monthly_weather_filtered <- monthly_weather %>%
+  filter(month == selected_month)
+
+
+ggplot(monthly_weather_filtered, aes(x = Station, y = .data[[selected_variable]], fill = Station)) +
+  geom_bar(stat = "identity", fill="royalblue") +
+  labs(
+    title = paste("Frequency of", selected_variable_title, "in", selected_month),
+    x = "Station", 
+    y = "Frequency"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, size = 10, vjust = 0.5),
+    strip.text = element_text(size = 12),
+    legend.position = "none"
+  ) +
+  scale_x_discrete(expand = expansion(mult = c(0, 0)))
+```
+
+### 4.3.2 Side by Side Comparison of Monthly Records
 
 ```{r, fig.width=12, fig.height=10}
 min_x <- as.Date("2023-12-01")
@@ -655,48 +771,6 @@ ggplot(monthly_rainfall_station, aes(x = yearmonth, y = frequency_heavy_rain)) +
   facet_wrap(~Station, ncol = 4)
 ```
 
-```{r}
-min_x <- as.Date("2023-12-01")
-max_x <- as.Date("2025-01-01")
+# 5 Visual Storyboard Plan
 
-ggplot(monthly_rainfall, aes(x = yearmonth, y = frequency_heavy_rain)) +
-  geom_bar(stat = "identity", fill = "royalblue") +
-  labs(x = "Month", y = "Frequency of Heavy Rain") +
-  theme(axis.text.x = element_text(angle = 0)) +
-  scale_x_date(
-    date_labels = "%b",
-    breaks = monthly_rainfall$yearmonth,
-    limits = c(min_x, max_x),
-    expand = expansion(mult = c(0, 0))
-  )
-```
-
-```{r, fig.width=10, fig.height=8}
-tmap_mode("plot")
- 
-tm_shape(jan_rainfall) +
-  tm_layout(
-    main.title = "January Frequency of Heavy Rain",
-    main.title.position = "center",
-    main.title.size = 1.2,
-    legend.position = c("RIGHT", "BOTTOM"),
-    legend.title.size = 0.8,
-    legend.text.size = 0.8,
-    legend.outside = TRUE,
-    legend.outside.position = "bottom",
-    legend.frame = FALSE,
-    frame = TRUE
-  ) +
-  tm_shape(jan_rainfall_with_data) +
-  tm_symbols(
-    col = "frequency_heavy_rain",  # Measurement Parameters here
-    palette = "-Green",
-    title.col = "Frequency of Heavy Rain",
-    popup.vars = c("Station", "frequency_heavy_rain"),
-    legend.size.show = FALSE
-  ) +
-  tm_shape(jan_rainfall_with_data) +
-  tm_text("Station", size = 0.7, col = "black", shadow = FALSE, ymod=-1) +
-  tm_grid(alpha = 0.2) +
-  tm_basemap("CartoDB.Positron")
-```
+The geospatial map visuals will be implemented on **Shiny Web Application.** To ensure a smooth workflow and to enhance user experience,
